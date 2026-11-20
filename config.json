@@ -1,0 +1,11 @@
+{
+  "countries": [
+    { "code": "IN", "name": "India" }
+  ],
+  "max_platforms_per_country": 20,
+  "use_gemini": true,
+  "gemini_model": "gemini-2.5-flash",
+  "exclude_name_contains": [
+    "with Ads", "Channel", "Store", "Amazon Video", "Google Play", "YouTube", "iTunes", "Apple TV Store"
+  ]
+}
