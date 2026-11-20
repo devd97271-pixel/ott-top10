@@ -184,6 +184,8 @@ def make_poster(rec, rank, dest):
     for x in range(640):
         dl.line([(x, 0), (x, 360)], fill=(0, 0, 0, int(215 * max(0, 1 - x / 430))))
     for y in range(180, 360):
+        db.line([(0, y), (640, y)], fill=(0, 0, 0, int(210 * (y - 180) / 180)))
+    im = Image.alpha_composite(Image.alpha_composite(im, left), bottom)
     d = ImageDraw.Draw(im)
     d.text((22, 4), str(rank), font=font(200), fill=(255, 255, 255, 235),
            stroke_width=3, stroke_fill=(0, 0, 0, 255))
