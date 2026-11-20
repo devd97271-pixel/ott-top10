@@ -1,0 +1,203 @@
+{
+ "id": "community.ott.top10",
+ "version": "1.0.498658",
+ "name": "OTT Top 10",
+ "description": "Top 10 movies and series per OTT platform and country.",
+ "resources": [
+  "catalog"
+ ],
+ "types": [
+  "movie",
+  "series"
+ ],
+ "catalogs": [
+  {
+   "type": "movie",
+   "id": "in-netflix-movie",
+   "name": "Netflix Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-netflix-series",
+   "name": "Netflix Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-amazon-prime-video-movie",
+   "name": "Amazon Prime Video Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-amazon-prime-video-series",
+   "name": "Amazon Prime Video Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-apple-tv-movie",
+   "name": "Apple TV Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-apple-tv-series",
+   "name": "Apple TV Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-jiohotstar-movie",
+   "name": "JioHotstar Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-jiohotstar-series",
+   "name": "JioHotstar Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-justwatch-tv-beta-movie",
+   "name": "JustWatch TV Beta Top 10 - Movies"
+  },
+  {
+   "type": "movie",
+   "id": "in-crunchyroll-movie",
+   "name": "Crunchyroll Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-crunchyroll-series",
+   "name": "Crunchyroll Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-zee5-movie",
+   "name": "Zee5 Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-zee5-series",
+   "name": "Zee5 Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-mubi-movie",
+   "name": "MUBI Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-mubi-series",
+   "name": "MUBI Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-sony-liv-movie",
+   "name": "Sony Liv Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-sony-liv-series",
+   "name": "Sony Liv Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-tubi-tv-movie",
+   "name": "Tubi TV Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-tubi-tv-series",
+   "name": "Tubi TV Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-guidedoc-movie",
+   "name": "GuideDoc Top 10 - Movies"
+  },
+  {
+   "type": "movie",
+   "id": "in-netflix-kids-movie",
+   "name": "Netflix Kids Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-netflix-kids-series",
+   "name": "Netflix Kids Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-sun-nxt-movie",
+   "name": "Sun Nxt Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-sun-nxt-series",
+   "name": "Sun Nxt Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-hoichoi-movie",
+   "name": "Hoichoi Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-hoichoi-series",
+   "name": "Hoichoi Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-hungama-play-movie",
+   "name": "Hungama Play Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-hungama-play-series",
+   "name": "Hungama Play Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-curiosity-stream-movie",
+   "name": "Curiosity Stream Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-curiosity-stream-series",
+   "name": "Curiosity Stream Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-epic-on-movie",
+   "name": "EPIC ON Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-epic-on-series",
+   "name": "EPIC ON Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-shemaroome-movie",
+   "name": "ShemarooMe Top 10 - Movies"
+  },
+  {
+   "type": "movie",
+   "id": "in-docsville-movie",
+   "name": "DOCSVILLE Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-docsville-series",
+   "name": "DOCSVILLE Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-tata-play-movie",
+   "name": "Tata Play Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-tata-play-series",
+   "name": "Tata Play Top 10 - Series"
+  }
+ ],
+ "behaviorHints": {
+  "configurable": false
+ }
+}
