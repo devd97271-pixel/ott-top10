@@ -3,6 +3,7 @@
 
 Sources: Netflix Tudum (official) -> Gemini + Google Search -> TMDB popularity fallback.
 """
+import colorsys
 import csv
 import io
 import json
@@ -13,7 +14,7 @@ import time
 from pathlib import Path
 
 import requests
-from PIL import Image, ImageDraw, ImageFont, ImageOps
+from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont, ImageOps
 
 ROOT = Path(__file__).resolve().parent.parent
 CFG = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
@@ -32,6 +33,7 @@ S.headers["User-Agent"] = "Mozilla/5.0 (ott-top10-builder)"
 
 CACHE = json.loads(CACHE_FILE.read_text(encoding="utf-8")) if CACHE_FILE.exists() else {}
 WRITTEN = set()
+LOGO_CACHE = {}
 
 
 def log(*a):
@@ -50,8 +52,18 @@ def tmdb(path, **params):
     return r.json()
 
 
+def year_range(kind, d):
+    first = (d.get("release_date") or d.get("first_air_date") or "")[:4]
+    if kind == "movie" or not first:
+        return first
+    last = (d.get("last_air_date") or "")[:4]
+    if d.get("status") in ("Ended", "Canceled") and last:
+        return first if last == first else f"{first}\u2013{last}"
+    return f"{first}\u2013"
+
+
 def details(kind, tid):
-    key = f"{kind}:{tid}"
+    key = f"v2:{kind}:{tid}"
     hit = CACHE.get(key)
     if hit and time.time() - hit["t"] < 7 * 86400:
         return hit
@@ -71,6 +83,7 @@ def details(kind, tid):
         "t": time.time(),
         "title": d.get("title") or d.get("name") or "",
         "year": (d.get("release_date") or d.get("first_air_date") or "")[:4],
+        "yrange": year_range(kind, d),
         "genre": (d.get("genres") or [{"name": ""}])[0]["name"],
         "imdb": imdb,
         "rating": round(float(rating), 1),
@@ -123,7 +136,8 @@ def get_providers(cc):
     bad = [b.lower() for b in CFG.get("exclude_name_contains", [])]
     items = [p for p in seen.values() if not any(b in p["provider_name"].lower() for b in bad)]
     items.sort(key=lambda p: (p.get("display_priorities") or {}).get(cc, 999))
-    return [(p["provider_id"], p["provider_name"]) for p in items[: CFG.get("max_platforms_per_country", 20)]]
+    return [(p["provider_id"], p["provider_name"], p.get("logo_path"))
+            for p in items[: CFG.get("max_platforms_per_country", 20)]]
 
 
 # ---------------------------------------------------------------- Netflix Tudum
@@ -168,34 +182,138 @@ def gemini_top(platform, country):
 
 # ---------------------------------------------------------------- Poster
 def font(size):
-    try:
-        return ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", size)
-    except OSError:
-        return ImageFont.load_default()
+    for p in ("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+              "/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf"):
+        try:
+            return ImageFont.truetype(p, size)
+        except OSError:
+            pass
+    return ImageFont.load_default()
 
 
-def make_poster(rec, rank, dest):
-    r = S.get(rec["img"], timeout=30)
-    r.raise_for_status()
-    im = ImageOps.fit(Image.open(io.BytesIO(r.content)).convert("RGBA"), (640, 360))
-    left = Image.new("RGBA", im.size, (0, 0, 0, 0))
-    bottom = Image.new("RGBA", im.size, (0, 0, 0, 0))
+def short_genre(g):
+    g = (g or "").split(" & ")[0].strip()
+    return "Sci-Fi" if g.lower() == "science fiction" else g
+
+
+def tint_color(im):
+    """Light tinted colour taken from the poster's lower-left area (like the reference look)."""
+    r, g, b = im.convert("RGB").crop((0, 150, 320, 360)).resize((1, 1), Image.LANCZOS).getpixel((0, 0))
+    h, s, _ = colorsys.rgb_to_hsv(r / 255, g / 255, b / 255)
+    s = min(max(s, 0.3), 0.75)
+    r, g, b = colorsys.hsv_to_rgb(h, s, 0.93)
+    return (int(r * 255), int(g * 255), int(b * 255), 255)
+
+
+def overlay(im, rgb, mask, opacity=1.0):
+    lay = Image.new("RGBA", im.size, rgb + (255,)) if isinstance(rgb, tuple) else rgb.copy()
+    lay.putalpha(mask.point(lambda p: int(p * opacity)))
+    return Image.alpha_composite(im, lay)
+
+
+def draw_number(im, rank):
+    """Big dark 'glass' number with soft shadow and light edge. Returns (image, centre_x)."""
+    txt = str(rank)
+    f = font(250 if rank < 10 else 190)
+    l, t, r, b = f.getbbox(txt)
+    w, h = r - l, b - t
+    x = 36
+    top = 24 if rank < 10 else 24 + int(0.729 * (250 - 190))
+    mask = Image.new("L", im.size, 0)
+    ImageDraw.Draw(mask).text((x - l, top - t), txt, font=f, fill=255)
+
+    shadow = mask.filter(ImageFilter.GaussianBlur(9))
+    im = overlay(im, (0, 0, 0), shadow, 0.6)
+
+    edge = ImageChops.subtract(mask.filter(ImageFilter.MaxFilter(5)), mask)
+    im = overlay(im, (255, 255, 255), edge, 0.35)
+
+    grad = Image.new("RGBA", im.size)
+    gd = ImageDraw.Draw(grad)
+    for yy in range(im.size[1]):
+        k = min(max((yy - top) / max(h, 1), 0), 1)
+        c = int(130 - 95 * k)
+        gd.line([(0, yy), (im.size[0], yy)], fill=(c, c, c, 255))
+    im = overlay(im, grad, mask, 0.86)
+    return im, x + w / 2
+
+
+def render_poster(base, rec, rank, prov, logo_img):
+    im = ImageOps.fit(base.convert("RGBA"), (640, 360))
+    tint = tint_color(im)
+
+    left = Image.new("L", im.size, 0)
+    bottom = Image.new("L", im.size, 0)
     dl, db = ImageDraw.Draw(left), ImageDraw.Draw(bottom)
     for x in range(640):
-        dl.line([(x, 0), (x, 360)], fill=(0, 0, 0, int(215 * max(0, 1 - x / 430))))
-    for y in range(180, 360):
-        db.line([(0, y), (640, y)], fill=(0, 0, 0, int(210 * (y - 180) / 180)))
-    im = Image.alpha_composite(Image.alpha_composite(im, left), bottom)
+        dl.line([(x, 0), (x, 360)], fill=int(255 * max(0, 1 - x / 430)))
+    for y in range(170, 360):
+        db.line([(0, y), (640, y)], fill=int(255 * (y - 170) / 190))
+    im = overlay(im, (0, 0, 0), left, 0.78)
+    im = overlay(im, (0, 0, 0), bottom, 0.8)
+
+    im, cx = draw_number(im, rank)
     d = ImageDraw.Draw(im)
-    d.text((22, 4), str(rank), font=font(200), fill=(255, 255, 255, 235),
-           stroke_width=3, stroke_fill=(0, 0, 0, 255))
-    lines = [rec["genre"].upper(), rec["year"], f"\u2605 {rec['rating']}" if rec["rating"] else ""]
-    y = 262
-    for ln in lines:
-        if ln:
-            d.text((26, y), ln, font=font(24), fill=(255, 215, 90, 255) if ln.startswith("\u2605") else (235, 235, 235, 255))
-            y += 30
-    im.convert("RGB").save(dest, "JPEG", quality=82)
+
+    f = font(22)
+    lines = [(short_genre(rec["genre"]).upper(), tint), (rec.get("yrange") or rec["year"], tint)]
+    if rec["rating"]:
+        lines.append((f"\u2605 {rec['rating']}", (245, 245, 245, 255)))
+    y = 224
+    for text, col in lines:
+        if not text:
+            continue
+        w = d.textlength(text, font=f)
+        d.text((max(12, cx - w / 2), y), text, font=f, fill=col, stroke_width=1, stroke_fill=(0, 0, 0, 255))
+        y += 28
+
+    # platform logo / name
+    ly = 318
+    custom = ROOT / "logos" / f"{prov['slug']}.png"
+    if custom.exists():
+        lg = Image.open(custom).convert("RGBA")
+        lg = lg.resize((max(1, int(lg.width * 30 / lg.height)), 30), Image.LANCZOS)
+        if lg.width > 170:
+            lg = lg.resize((170, max(1, int(lg.height * 170 / lg.width))), Image.LANCZOS)
+        im.alpha_composite(lg, (max(8, int(cx - lg.width / 2)), ly))
+    else:
+        nf = font(17)
+        name = prov["name"]
+        tw = d.textlength(name, font=nf)
+        if logo_img is not None:
+            ic = logo_img.convert("RGBA").resize((28, 28), Image.LANCZOS)
+            m = Image.new("L", (28, 28), 0)
+            ImageDraw.Draw(m).rounded_rectangle((0, 0, 27, 27), radius=6, fill=255)
+            ic.putalpha(m)
+            x0 = max(10, int(cx - (28 + 8 + tw) / 2))
+            im.alpha_composite(ic, (x0, ly))
+            d.text((x0 + 36, ly + 4), name, font=nf, fill=(255, 255, 255, 255),
+                   stroke_width=1, stroke_fill=(0, 0, 0, 255))
+        else:
+            d.text((max(10, cx - tw / 2), ly + 4), name, font=nf, fill=(255, 255, 255, 255),
+                   stroke_width=1, stroke_fill=(0, 0, 0, 255))
+    return im.convert("RGB")
+
+
+def provider_logo(path):
+    if not path:
+        return None
+    if path not in LOGO_CACHE:
+        try:
+            r = S.get("https://image.tmdb.org/t/p/w92" + path, timeout=20)
+            r.raise_for_status()
+            LOGO_CACHE[path] = Image.open(io.BytesIO(r.content)).convert("RGBA")
+        except Exception:
+            LOGO_CACHE[path] = None
+    return LOGO_CACHE[path]
+
+
+def make_poster(rec, rank, dest, prov):
+    r = S.get(rec["img"], timeout=30)
+    r.raise_for_status()
+    base = Image.open(io.BytesIO(r.content))
+    im = render_poster(base, rec, rank, prov, provider_logo(prov.get("logo")))
+    im.save(dest, "JPEG", quality=84)
 
 
 # ---------------------------------------------------------------- Main
@@ -224,8 +342,9 @@ def main():
         except Exception as e:
             log("providers failed", cc, e)
             continue
-        for pid, pname in providers:
+        for pid, pname, plogo in providers:
             slug = re.sub(r"[^a-z0-9]+", "-", pname.lower()).strip("-")
+            prov = {"name": pname, "slug": slug, "logo": plogo}
             got = {}
             source = "tmdb"
             try:
@@ -262,13 +381,13 @@ def main():
                         if not rec["img"]:
                             continue
                         fname = f"{catid}-{rank}.jpg"
-                        make_poster(rec, rank, POSTERS / fname)
+                        make_poster(rec, rank, POSTERS / fname, prov)
                         WRITTEN.add(("posters", fname))
                         metas.append({
                             "id": rec["imdb"] or f"tmdb:{tid}",
                             "type": kind,
                             "name": rec["title"],
-                            "poster": f"{BASE}/posters/{fname}?v={tid}",
+                            "poster": f"{BASE}/posters/{fname}?v={tid}-{int(time.time()) // 86400}",
                             "posterShape": "landscape",
                             "releaseInfo": rec["year"],
                             "genres": [rec["genre"]] if rec["genre"] else [],
