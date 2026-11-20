@@ -53,11 +53,6 @@
   },
   {
    "type": "movie",
-   "id": "in-justwatch-tv-beta-movie",
-   "name": "JustWatch TV Beta Top 10 - Movies"
-  },
-  {
-   "type": "movie",
    "id": "in-crunchyroll-movie",
    "name": "Crunchyroll Top 10 - Movies"
   },
@@ -95,31 +90,6 @@
    "type": "series",
    "id": "in-sony-liv-series",
    "name": "Sony Liv Top 10 - Series"
-  },
-  {
-   "type": "movie",
-   "id": "in-tubi-tv-movie",
-   "name": "Tubi TV Top 10 - Movies"
-  },
-  {
-   "type": "series",
-   "id": "in-tubi-tv-series",
-   "name": "Tubi TV Top 10 - Series"
-  },
-  {
-   "type": "movie",
-   "id": "in-guidedoc-movie",
-   "name": "GuideDoc Top 10 - Movies"
-  },
-  {
-   "type": "movie",
-   "id": "in-netflix-kids-movie",
-   "name": "Netflix Kids Top 10 - Movies"
-  },
-  {
-   "type": "series",
-   "id": "in-netflix-kids-series",
-   "name": "Netflix Kids Top 10 - Series"
   },
   {
    "type": "movie",
@@ -195,6 +165,186 @@
    "type": "series",
    "id": "in-tata-play-series",
    "name": "Tata Play Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-manoramamax-movie",
+   "name": "ManoramaMax Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-manoramamax-series",
+   "name": "ManoramaMax Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-mx-player-movie",
+   "name": "MX Player Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-mx-player-series",
+   "name": "MX Player Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-aha-movie",
+   "name": "aha Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-aha-series",
+   "name": "aha Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-wow-presents-plus-movie",
+   "name": "WOW Presents Plus Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-wow-presents-plus-series",
+   "name": "WOW Presents Plus Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-magellan-tv-movie",
+   "name": "Magellan TV Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-magellan-tv-series",
+   "name": "Magellan TV Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-broadwayhd-movie",
+   "name": "BroadwayHD Top 10 - Movies"
+  },
+  {
+   "type": "movie",
+   "id": "in-filmzie-movie",
+   "name": "Filmzie Top 10 - Movies"
+  },
+  {
+   "type": "movie",
+   "id": "in-lionsgate-play-movie",
+   "name": "Lionsgate Play Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-lionsgate-play-series",
+   "name": "Lionsgate Play Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-moviesaints-movie",
+   "name": "MovieSaints Top 10 - Movies"
+  },
+  {
+   "type": "movie",
+   "id": "in-dekkoo-movie",
+   "name": "Dekkoo Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-dekkoo-series",
+   "name": "Dekkoo Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-true-story-movie",
+   "name": "True Story Top 10 - Movies"
+  },
+  {
+   "type": "movie",
+   "id": "in-docalliance-films-movie",
+   "name": "DocAlliance Films Top 10 - Movies"
+  },
+  {
+   "type": "movie",
+   "id": "in-vi-movies-and-tv-movie",
+   "name": "VI movies and tv Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-vi-movies-and-tv-series",
+   "name": "VI movies and tv Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-eventive-movie",
+   "name": "Eventive Top 10 - Movies"
+  },
+  {
+   "type": "movie",
+   "id": "in-cultpix-movie",
+   "name": "Cultpix Top 10 - Movies"
+  },
+  {
+   "type": "movie",
+   "id": "in-takflix-movie",
+   "name": "Takflix Top 10 - Movies"
+  },
+  {
+   "type": "movie",
+   "id": "in-amazon-mx-player-movie",
+   "name": "Amazon MX Player Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-amazon-mx-player-series",
+   "name": "Amazon MX Player Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-shahid-vip-movie",
+   "name": "Shahid VIP Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-shahid-vip-series",
+   "name": "Shahid VIP Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-found-tv-movie",
+   "name": "FOUND TV Top 10 - Movies"
+  },
+  {
+   "type": "movie",
+   "id": "in-bloodstream-movie",
+   "name": "Bloodstream Top 10 - Movies"
+  },
+  {
+   "type": "movie",
+   "id": "in-movieme-movie",
+   "name": "MovieMe Top 10 - Movies"
+  },
+  {
+   "type": "movie",
+   "id": "in-kableone-movie",
+   "name": "KableOne Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-kableone-series",
+   "name": "KableOne Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-artiflix-movie",
+   "name": "Artiflix Top 10 - Movies"
+  },
+  {
+   "type": "movie",
+   "id": "in-artify-movie",
+   "name": "Artify Top 10 - Movies"
+  },
+  {
+   "type": "movie",
+   "id": "in-brew-movie",
+   "name": "Brew Top 10 - Movies"
   }
  ],
  "behaviorHints": {
