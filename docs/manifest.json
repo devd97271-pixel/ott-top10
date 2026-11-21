@@ -1,6 +1,6 @@
 {
  "id": "community.ott.top10",
- "version": "1.0.498667",
+ "version": "1.0.498676",
  "name": "OTT Top 10",
  "description": "Top 10 movies and series per OTT platform and country.",
  "resources": [
@@ -143,11 +143,6 @@
   },
   {
    "type": "movie",
-   "id": "in-shemaroome-movie",
-   "name": "ShemarooMe Top 10 - Movies"
-  },
-  {
-   "type": "movie",
    "id": "in-docsville-movie",
    "name": "DOCSVILLE Top 10 - Movies"
   },
@@ -218,16 +213,6 @@
   },
   {
    "type": "movie",
-   "id": "in-broadwayhd-movie",
-   "name": "BroadwayHD Top 10 - Movies"
-  },
-  {
-   "type": "movie",
-   "id": "in-filmzie-movie",
-   "name": "Filmzie Top 10 - Movies"
-  },
-  {
-   "type": "movie",
    "id": "in-lionsgate-play-movie",
    "name": "Lionsgate Play Top 10 - Movies"
   },
@@ -235,11 +220,6 @@
    "type": "series",
    "id": "in-lionsgate-play-series",
    "name": "Lionsgate Play Top 10 - Series"
-  },
-  {
-   "type": "movie",
-   "id": "in-moviesaints-movie",
-   "name": "MovieSaints Top 10 - Movies"
   },
   {
    "type": "movie",
@@ -253,16 +233,6 @@
   },
   {
    "type": "movie",
-   "id": "in-true-story-movie",
-   "name": "True Story Top 10 - Movies"
-  },
-  {
-   "type": "movie",
-   "id": "in-docalliance-films-movie",
-   "name": "DocAlliance Films Top 10 - Movies"
-  },
-  {
-   "type": "movie",
    "id": "in-vi-movies-and-tv-movie",
    "name": "VI movies and tv Top 10 - Movies"
   },
@@ -273,18 +243,8 @@
   },
   {
    "type": "movie",
-   "id": "in-eventive-movie",
-   "name": "Eventive Top 10 - Movies"
-  },
-  {
-   "type": "movie",
    "id": "in-cultpix-movie",
    "name": "Cultpix Top 10 - Movies"
-  },
-  {
-   "type": "movie",
-   "id": "in-takflix-movie",
-   "name": "Takflix Top 10 - Movies"
   },
   {
    "type": "movie",
@@ -313,16 +273,6 @@
   },
   {
    "type": "movie",
-   "id": "in-bloodstream-movie",
-   "name": "Bloodstream Top 10 - Movies"
-  },
-  {
-   "type": "movie",
-   "id": "in-movieme-movie",
-   "name": "MovieMe Top 10 - Movies"
-  },
-  {
-   "type": "movie",
    "id": "in-kableone-movie",
    "name": "KableOne Top 10 - Movies"
   },
@@ -333,18 +283,28 @@
   },
   {
    "type": "movie",
-   "id": "in-artiflix-movie",
-   "name": "Artiflix Top 10 - Movies"
-  },
-  {
-   "type": "movie",
    "id": "in-artify-movie",
    "name": "Artify Top 10 - Movies"
   },
   {
    "type": "movie",
-   "id": "in-brew-movie",
-   "name": "Brew Top 10 - Movies"
+   "id": "in-tencent-video-movie",
+   "name": "Tencent Video Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-tencent-video-series",
+   "name": "Tencent Video Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-movie-sphere-movie",
+   "name": "Movie Sphere+ Top 10 - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-movie-sphere-series",
+   "name": "Movie Sphere+ Top 10 - Series"
   }
  ],
  "behaviorHints": {
