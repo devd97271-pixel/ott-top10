@@ -785,8 +785,8 @@ def main():
                 try:
                     if section == "new":
                         ids, src = new_ids(kind, jw_short)
-                        if ids is None and tm_ids:
-                            ids = tmdb_provider_new(tk, tm_ids, TODAY - dt.timedelta(days=NEW_DAYS))
+                            if len(ids) < 3:
+                                ids = tmdb_provider_new(tk, tm_ids, TODAY - dt.timedelta(days=120))
                         label = "New Release"
                         mode = "new"
                     else:
