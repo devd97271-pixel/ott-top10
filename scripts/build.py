@@ -63,6 +63,7 @@ def log(*a):
 
 def note(*a):
     msg = " ".join(str(x) for x in a)
+    msg = re.sub(r"api_key=[^&\s\"']+", "api_key=HIDDEN", msg)
     print(msg, flush=True)
     NOTES.append(msg[:240])
 
