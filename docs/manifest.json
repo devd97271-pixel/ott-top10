@@ -1,8 +1,8 @@
 {
  "id": "community.ott.top10",
- "version": "1.0.498714",
+ "version": "1.0.498724",
  "name": "OTT Top 10",
- "description": "Top 10 movies and series per OTT platform and country.",
+ "description": "Cinema, new releases and Top 10 per OTT platform.",
  "resources": [
   "catalog"
  ],
@@ -13,338 +13,123 @@
  "catalogs": [
   {
    "type": "movie",
-   "id": "in-netflix-movie",
+   "id": "in-cinema-now",
+   "name": "Now Showing in Cinema - November"
+  },
+  {
+   "type": "movie",
+   "id": "in-cinema-upcoming",
+   "name": "Upcoming in Cinema (24 Nov - 31 Dec)"
+  },
+  {
+   "type": "movie",
+   "id": "in-netflix-new-movie",
+   "name": "Netflix New Release - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-netflix-new-series",
+   "name": "Netflix New Release - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-netflix-top-movie",
    "name": "Netflix Top 10 - Movies"
   },
   {
    "type": "series",
-   "id": "in-netflix-series",
+   "id": "in-netflix-top-series",
    "name": "Netflix Top 10 - Series"
   },
   {
    "type": "movie",
-   "id": "in-amazon-prime-video-movie",
-   "name": "Amazon Prime Video Top 10 - Movies"
+   "id": "in-prime-video-new-movie",
+   "name": "Prime Video New Release - Movies"
   },
   {
    "type": "series",
-   "id": "in-amazon-prime-video-series",
-   "name": "Amazon Prime Video Top 10 - Series"
+   "id": "in-prime-video-new-series",
+   "name": "Prime Video New Release - Series"
   },
   {
    "type": "movie",
-   "id": "in-apple-tv-movie",
-   "name": "Apple TV Top 10 - Movies"
+   "id": "in-prime-video-top-movie",
+   "name": "Prime Video Top 10 - Movies"
   },
   {
    "type": "series",
-   "id": "in-apple-tv-series",
-   "name": "Apple TV Top 10 - Series"
+   "id": "in-prime-video-top-series",
+   "name": "Prime Video Top 10 - Series"
   },
   {
    "type": "movie",
-   "id": "in-jiohotstar-movie",
+   "id": "in-jiohotstar-new-movie",
+   "name": "JioHotstar New Release - Movies"
+  },
+  {
+   "type": "series",
+   "id": "in-jiohotstar-new-series",
+   "name": "JioHotstar New Release - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-jiohotstar-top-movie",
    "name": "JioHotstar Top 10 - Movies"
   },
   {
    "type": "series",
-   "id": "in-jiohotstar-series",
+   "id": "in-jiohotstar-top-series",
    "name": "JioHotstar Top 10 - Series"
   },
   {
    "type": "movie",
-   "id": "in-crunchyroll-movie",
-   "name": "Crunchyroll Top 10 - Movies"
-  },
-  {
-   "type": "series",
-   "id": "in-crunchyroll-series",
-   "name": "Crunchyroll Top 10 - Series"
-  },
-  {
-   "type": "movie",
-   "id": "in-zee5-movie",
-   "name": "Zee5 Top 10 - Movies"
-  },
-  {
-   "type": "series",
-   "id": "in-zee5-series",
-   "name": "Zee5 Top 10 - Series"
-  },
-  {
-   "type": "movie",
-   "id": "in-mubi-movie",
-   "name": "MUBI Top 10 - Movies"
-  },
-  {
-   "type": "series",
-   "id": "in-mubi-series",
-   "name": "MUBI Top 10 - Series"
-  },
-  {
-   "type": "movie",
-   "id": "in-sony-liv-movie",
-   "name": "Sony Liv Top 10 - Movies"
-  },
-  {
-   "type": "series",
-   "id": "in-sony-liv-series",
-   "name": "Sony Liv Top 10 - Series"
-  },
-  {
-   "type": "movie",
-   "id": "in-sun-nxt-movie",
-   "name": "Sun Nxt Top 10 - Movies"
-  },
-  {
-   "type": "series",
-   "id": "in-sun-nxt-series",
-   "name": "Sun Nxt Top 10 - Series"
-  },
-  {
-   "type": "movie",
-   "id": "in-hoichoi-movie",
-   "name": "Hoichoi Top 10 - Movies"
-  },
-  {
-   "type": "series",
-   "id": "in-hoichoi-series",
-   "name": "Hoichoi Top 10 - Series"
-  },
-  {
-   "type": "movie",
-   "id": "in-hungama-play-movie",
-   "name": "Hungama Play Top 10 - Movies"
-  },
-  {
-   "type": "series",
-   "id": "in-hungama-play-series",
-   "name": "Hungama Play Top 10 - Series"
-  },
-  {
-   "type": "movie",
-   "id": "in-curiosity-stream-movie",
-   "name": "Curiosity Stream Top 10 - Movies"
-  },
-  {
-   "type": "series",
-   "id": "in-curiosity-stream-series",
-   "name": "Curiosity Stream Top 10 - Series"
-  },
-  {
-   "type": "movie",
-   "id": "in-epic-on-movie",
-   "name": "EPIC ON Top 10 - Movies"
-  },
-  {
-   "type": "series",
-   "id": "in-epic-on-series",
-   "name": "EPIC ON Top 10 - Series"
-  },
-  {
-   "type": "movie",
-   "id": "in-shemaroome-movie",
-   "name": "ShemarooMe Top 10 - Movies"
-  },
-  {
-   "type": "movie",
-   "id": "in-docsville-movie",
-   "name": "DOCSVILLE Top 10 - Movies"
-  },
-  {
-   "type": "series",
-   "id": "in-docsville-series",
-   "name": "DOCSVILLE Top 10 - Series"
-  },
-  {
-   "type": "movie",
-   "id": "in-tata-play-movie",
-   "name": "Tata Play Top 10 - Movies"
-  },
-  {
-   "type": "series",
-   "id": "in-tata-play-series",
-   "name": "Tata Play Top 10 - Series"
-  },
-  {
-   "type": "movie",
-   "id": "in-manoramamax-movie",
-   "name": "ManoramaMax Top 10 - Movies"
-  },
-  {
-   "type": "series",
-   "id": "in-manoramamax-series",
-   "name": "ManoramaMax Top 10 - Series"
-  },
-  {
-   "type": "movie",
-   "id": "in-mx-player-movie",
+   "id": "in-mx-player-top-movie",
    "name": "MX Player Top 10 - Movies"
   },
   {
    "type": "series",
-   "id": "in-mx-player-series",
+   "id": "in-mx-player-top-series",
    "name": "MX Player Top 10 - Series"
   },
   {
    "type": "movie",
-   "id": "in-aha-movie",
-   "name": "aha Top 10 - Movies"
+   "id": "in-sonyliv-top-movie",
+   "name": "SonyLIV Top 10 - Movies"
   },
   {
    "type": "series",
-   "id": "in-aha-series",
-   "name": "aha Top 10 - Series"
+   "id": "in-sonyliv-top-series",
+   "name": "SonyLIV Top 10 - Series"
   },
   {
    "type": "movie",
-   "id": "in-wow-presents-plus-movie",
-   "name": "WOW Presents Plus Top 10 - Movies"
+   "id": "in-zee5-new-movie",
+   "name": "Zee5 New Release - Movies"
   },
   {
    "type": "series",
-   "id": "in-wow-presents-plus-series",
-   "name": "WOW Presents Plus Top 10 - Series"
+   "id": "in-zee5-new-series",
+   "name": "Zee5 New Release - Series"
   },
   {
    "type": "movie",
-   "id": "in-magellan-tv-movie",
-   "name": "Magellan TV Top 10 - Movies"
+   "id": "in-zee5-top-movie",
+   "name": "Zee5 Top 10 - Movies"
   },
   {
    "type": "series",
-   "id": "in-magellan-tv-series",
-   "name": "Magellan TV Top 10 - Series"
+   "id": "in-zee5-top-series",
+   "name": "Zee5 Top 10 - Series"
   },
   {
    "type": "movie",
-   "id": "in-broadwayhd-movie",
-   "name": "BroadwayHD Top 10 - Movies"
-  },
-  {
-   "type": "movie",
-   "id": "in-filmzie-movie",
-   "name": "Filmzie Top 10 - Movies"
-  },
-  {
-   "type": "movie",
-   "id": "in-lionsgate-play-movie",
-   "name": "Lionsgate Play Top 10 - Movies"
+   "id": "in-hoichoi-top-movie",
+   "name": "Hoichoi Top 10 - Movies"
   },
   {
    "type": "series",
-   "id": "in-lionsgate-play-series",
-   "name": "Lionsgate Play Top 10 - Series"
-  },
-  {
-   "type": "movie",
-   "id": "in-moviesaints-movie",
-   "name": "MovieSaints Top 10 - Movies"
-  },
-  {
-   "type": "movie",
-   "id": "in-dekkoo-movie",
-   "name": "Dekkoo Top 10 - Movies"
-  },
-  {
-   "type": "series",
-   "id": "in-dekkoo-series",
-   "name": "Dekkoo Top 10 - Series"
-  },
-  {
-   "type": "movie",
-   "id": "in-true-story-movie",
-   "name": "True Story Top 10 - Movies"
-  },
-  {
-   "type": "movie",
-   "id": "in-docalliance-films-movie",
-   "name": "DocAlliance Films Top 10 - Movies"
-  },
-  {
-   "type": "movie",
-   "id": "in-vi-movies-and-tv-movie",
-   "name": "VI movies and tv Top 10 - Movies"
-  },
-  {
-   "type": "series",
-   "id": "in-vi-movies-and-tv-series",
-   "name": "VI movies and tv Top 10 - Series"
-  },
-  {
-   "type": "movie",
-   "id": "in-eventive-movie",
-   "name": "Eventive Top 10 - Movies"
-  },
-  {
-   "type": "movie",
-   "id": "in-cultpix-movie",
-   "name": "Cultpix Top 10 - Movies"
-  },
-  {
-   "type": "movie",
-   "id": "in-takflix-movie",
-   "name": "Takflix Top 10 - Movies"
-  },
-  {
-   "type": "movie",
-   "id": "in-amazon-mx-player-movie",
-   "name": "Amazon MX Player Top 10 - Movies"
-  },
-  {
-   "type": "series",
-   "id": "in-amazon-mx-player-series",
-   "name": "Amazon MX Player Top 10 - Series"
-  },
-  {
-   "type": "movie",
-   "id": "in-shahid-vip-movie",
-   "name": "Shahid VIP Top 10 - Movies"
-  },
-  {
-   "type": "series",
-   "id": "in-shahid-vip-series",
-   "name": "Shahid VIP Top 10 - Series"
-  },
-  {
-   "type": "movie",
-   "id": "in-found-tv-movie",
-   "name": "FOUND TV Top 10 - Movies"
-  },
-  {
-   "type": "movie",
-   "id": "in-bloodstream-movie",
-   "name": "Bloodstream Top 10 - Movies"
-  },
-  {
-   "type": "movie",
-   "id": "in-movieme-movie",
-   "name": "MovieMe Top 10 - Movies"
-  },
-  {
-   "type": "movie",
-   "id": "in-kableone-movie",
-   "name": "KableOne Top 10 - Movies"
-  },
-  {
-   "type": "series",
-   "id": "in-kableone-series",
-   "name": "KableOne Top 10 - Series"
-  },
-  {
-   "type": "movie",
-   "id": "in-artiflix-movie",
-   "name": "Artiflix Top 10 - Movies"
-  },
-  {
-   "type": "movie",
-   "id": "in-artify-movie",
-   "name": "Artify Top 10 - Movies"
-  },
-  {
-   "type": "movie",
-   "id": "in-brew-movie",
-   "name": "Brew Top 10 - Movies"
+   "id": "in-hoichoi-top-series",
+   "name": "Hoichoi Top 10 - Series"
   }
  ],
  "behaviorHints": {
