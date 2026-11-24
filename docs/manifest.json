@@ -1,6 +1,6 @@
 {
  "id": "community.ott.top10",
- "version": "1.0.498724",
+ "version": "1.0.498747",
  "name": "OTT Top 10",
  "description": "Cinema, new releases and Top 10 per OTT platform.",
  "resources": [
@@ -19,17 +19,17 @@
   {
    "type": "movie",
    "id": "in-cinema-upcoming",
-   "name": "Upcoming in Cinema (24 Nov - 31 Dec)"
+   "name": "Upcoming in Cinema"
   },
   {
    "type": "movie",
    "id": "in-netflix-new-movie",
-   "name": "Netflix New Release - Movies"
+   "name": "Netflix New Release"
   },
   {
    "type": "series",
    "id": "in-netflix-new-series",
-   "name": "Netflix New Release - Series"
+   "name": "Netflix New Release"
   },
   {
    "type": "movie",
@@ -44,12 +44,12 @@
   {
    "type": "movie",
    "id": "in-prime-video-new-movie",
-   "name": "Prime Video New Release - Movies"
+   "name": "Prime Video New Release"
   },
   {
    "type": "series",
    "id": "in-prime-video-new-series",
-   "name": "Prime Video New Release - Series"
+   "name": "Prime Video New Release"
   },
   {
    "type": "movie",
@@ -64,12 +64,12 @@
   {
    "type": "movie",
    "id": "in-jiohotstar-new-movie",
-   "name": "JioHotstar New Release - Movies"
+   "name": "JioHotstar New Release"
   },
   {
    "type": "series",
    "id": "in-jiohotstar-new-series",
-   "name": "JioHotstar New Release - Series"
+   "name": "JioHotstar New Release"
   },
   {
    "type": "movie",
@@ -82,6 +82,11 @@
    "name": "JioHotstar Top 10 - Series"
   },
   {
+   "type": "series",
+   "id": "in-mx-player-new-series",
+   "name": "MX Player New Release"
+  },
+  {
    "type": "movie",
    "id": "in-mx-player-top-movie",
    "name": "MX Player Top 10 - Movies"
@@ -90,6 +95,16 @@
    "type": "series",
    "id": "in-mx-player-top-series",
    "name": "MX Player Top 10 - Series"
+  },
+  {
+   "type": "movie",
+   "id": "in-sonyliv-new-movie",
+   "name": "SonyLIV New Release"
+  },
+  {
+   "type": "series",
+   "id": "in-sonyliv-new-series",
+   "name": "SonyLIV New Release"
   },
   {
    "type": "movie",
@@ -104,12 +119,12 @@
   {
    "type": "movie",
    "id": "in-zee5-new-movie",
-   "name": "Zee5 New Release - Movies"
+   "name": "Zee5 New Release"
   },
   {
    "type": "series",
    "id": "in-zee5-new-series",
-   "name": "Zee5 New Release - Series"
+   "name": "Zee5 New Release"
   },
   {
    "type": "movie",
@@ -120,6 +135,11 @@
    "type": "series",
    "id": "in-zee5-top-series",
    "name": "Zee5 Top 10 - Series"
+  },
+  {
+   "type": "series",
+   "id": "in-hoichoi-new-series",
+   "name": "Hoichoi New Release"
   },
   {
    "type": "movie",
