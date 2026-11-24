@@ -2,10 +2,9 @@
   "country": "IN",
   "country_name": "India",
   "bms_city": "mumbai",
-  "new_release_days": 30,
-  "new_limit": 20,
-  "cinema_limit": 20,
-  "cinema_now_days": 35,
+  "since": "2026-10-01",
+  "new_limit": 40,
+  "cinema_limit": 60,
   "use_gemini": false,
   "gemini_model": "gemini-2.5-flash",
   "platforms": [
