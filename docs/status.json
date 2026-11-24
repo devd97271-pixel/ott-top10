@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-24 09:14 IST",
+ "updated": "2026-11-24 12:48 IST",
  "catalogs": {
   "in-cinema-now": {
    "name": "Now Showing in Cinema - November",
@@ -94,7 +94,7 @@
   "in-sonyliv-new-series": {
    "name": "SonyLIV New Release",
    "source": "justwatch+tmdb",
-   "items": 5
+   "items": 6
   },
   "in-sonyliv-top-movie": {
    "name": "SonyLIV Top 10 - Movies",
