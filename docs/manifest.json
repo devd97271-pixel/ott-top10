@@ -1,6 +1,6 @@
 {
  "id": "community.ott.top10",
- "version": "1.0.498773",
+ "version": "1.0.498778",
  "name": "OTT Top 10",
  "description": "Cinema, new releases and Top 10 per OTT platform.",
  "resources": [
@@ -12,6 +12,7 @@
     "series"
    ],
    "idPrefixes": [
+    "tt",
     "tmdb:"
    ]
   }
@@ -23,113 +24,158 @@
  "catalogs": [
   {
    "type": "movie",
-   "id": "in-cinema-now",
+   "id": "in2-cinema-now",
    "name": "Now Showing in Cinema"
   },
   {
    "type": "movie",
-   "id": "in-cinema-upcoming",
+   "id": "in2-cinema-upcoming",
    "name": "Upcoming in Cinema"
   },
   {
    "type": "movie",
-   "id": "in-netflix-new-movie",
+   "id": "in2-netflix-new-movie",
    "name": "Netflix New Release"
   },
   {
    "type": "series",
-   "id": "in-netflix-new-series",
+   "id": "in2-netflix-new-series",
    "name": "Netflix New Release"
   },
   {
    "type": "movie",
-   "id": "in-netflix-top-movie",
+   "id": "in2-netflix-top-movie",
    "name": "Netflix Top 10"
   },
   {
    "type": "series",
-   "id": "in-netflix-top-series",
+   "id": "in2-netflix-top-series",
    "name": "Netflix Top 10"
   },
   {
    "type": "movie",
-   "id": "in-prime-video-new-movie",
+   "id": "in2-prime-video-new-movie",
    "name": "Prime Video New Release"
   },
   {
    "type": "series",
-   "id": "in-prime-video-new-series",
+   "id": "in2-prime-video-new-series",
    "name": "Prime Video New Release"
   },
   {
    "type": "movie",
-   "id": "in-prime-video-top-movie",
+   "id": "in2-prime-video-top-movie",
    "name": "Prime Video Top 10"
   },
   {
    "type": "series",
-   "id": "in-prime-video-top-series",
+   "id": "in2-prime-video-top-series",
    "name": "Prime Video Top 10"
   },
   {
    "type": "movie",
-   "id": "in-jiohotstar-new-movie",
+   "id": "in2-jiohotstar-new-movie",
    "name": "JioHotstar New Release"
   },
   {
    "type": "series",
-   "id": "in-jiohotstar-new-series",
+   "id": "in2-jiohotstar-new-series",
    "name": "JioHotstar New Release"
   },
   {
    "type": "movie",
-   "id": "in-crunchyroll-top-movie",
+   "id": "in2-jiohotstar-top-movie",
+   "name": "JioHotstar Top 10"
+  },
+  {
+   "type": "series",
+   "id": "in2-jiohotstar-top-series",
+   "name": "JioHotstar Top 10"
+  },
+  {
+   "type": "series",
+   "id": "in2-crunchyroll-new-series",
+   "name": "Crunchyroll New Release"
+  },
+  {
+   "type": "movie",
+   "id": "in2-crunchyroll-top-movie",
    "name": "Crunchyroll Top 10"
   },
   {
    "type": "series",
-   "id": "in-crunchyroll-top-series",
+   "id": "in2-crunchyroll-top-series",
    "name": "Crunchyroll Top 10"
   },
   {
    "type": "series",
-   "id": "in-mx-player-new-series",
+   "id": "in2-mx-player-new-series",
    "name": "MX Player New Release"
   },
   {
    "type": "movie",
-   "id": "in-mx-player-top-movie",
+   "id": "in2-mx-player-top-movie",
    "name": "MX Player Top 10"
   },
   {
    "type": "series",
-   "id": "in-mx-player-top-series",
+   "id": "in2-mx-player-top-series",
    "name": "MX Player Top 10"
   },
   {
    "type": "movie",
-   "id": "in-sonyliv-new-movie",
+   "id": "in2-sonyliv-new-movie",
    "name": "SonyLIV New Release"
   },
   {
    "type": "series",
-   "id": "in-sonyliv-new-series",
+   "id": "in2-sonyliv-new-series",
    "name": "SonyLIV New Release"
   },
   {
    "type": "movie",
-   "id": "in-zee5-new-movie",
+   "id": "in2-sonyliv-top-movie",
+   "name": "SonyLIV Top 10"
+  },
+  {
+   "type": "series",
+   "id": "in2-sonyliv-top-series",
+   "name": "SonyLIV Top 10"
+  },
+  {
+   "type": "movie",
+   "id": "in2-zee5-new-movie",
    "name": "Zee5 New Release"
   },
   {
    "type": "series",
-   "id": "in-zee5-new-series",
+   "id": "in2-zee5-new-series",
    "name": "Zee5 New Release"
   },
   {
+   "type": "movie",
+   "id": "in2-zee5-top-movie",
+   "name": "Zee5 Top 10"
+  },
+  {
    "type": "series",
-   "id": "in-hoichoi-new-series",
+   "id": "in2-zee5-top-series",
+   "name": "Zee5 Top 10"
+  },
+  {
+   "type": "series",
+   "id": "in2-hoichoi-new-series",
    "name": "Hoichoi New Release"
+  },
+  {
+   "type": "movie",
+   "id": "in2-hoichoi-top-movie",
+   "name": "Hoichoi Top 10"
+  },
+  {
+   "type": "series",
+   "id": "in2-hoichoi-top-series",
+   "name": "Hoichoi Top 10"
   }
  ],
  "behaviorHints": {
