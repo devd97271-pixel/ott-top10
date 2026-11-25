@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Builds static Stremio/Nuvio catalogs into ./docs for GitHub Pages.
 
-Rows: cinema (now showing / upcoming) + per platform: new releases and top 10.
+Rows: cinema (now showing / upcoming) + per platform: new releases and top 10 (per-platform on/off in config).
 Top 10 sources: Netflix Tudum -> FlixPatrol -> JustWatch -> (Gemini) -> TMDB.
 New releases: JustWatch -> TMDB. Cinema: BookMyShow -> TMDB.
 """
@@ -40,7 +40,10 @@ JW_URL = "https://apis.justwatch.com/graphql"
 NOW = dt.datetime.now(dt.timezone.utc) + dt.timedelta(hours=5, minutes=30)
 TODAY = NOW.date()  # India date
 NEW_DAYS = int(CFG.get("new_release_days", 30))
-NEW_LIMIT = int(CFG.get("new_limit", 40))
+NEW_LIMIT = int(CFG.get("new_limit", 60))
+NEW_PAGES = int(CFG.get("new_pages", 6))
+LOGO_MODES = set(CFG.get("title_logo_on", ["top10"]))  # top10 / new / cinema
+META_ALL = bool(CFG.get("meta_for_all", False))
 CINEMA_LIMIT = int(CFG.get("cinema_limit", 60))
 
 
@@ -55,7 +58,7 @@ _first_next = (TODAY.replace(day=1) + dt.timedelta(days=32)).replace(day=1)
 SINCE = cfg_date("since", TODAY - dt.timedelta(days=NEW_DAYS))
 UPCOMING_UNTIL = cfg_date("upcoming_until",
                           (_first_next + dt.timedelta(days=32)).replace(day=1) - dt.timedelta(days=1))
-POSTER_VER = "g3"
+POSTER_VER = "g4"
 
 S = requests.Session()
 S.headers["User-Agent"] = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -65,6 +68,8 @@ S.headers["Accept-Language"] = "en-IN,en;q=0.9"
 CACHE = json.loads(CACHE_FILE.read_text(encoding="utf-8")) if CACHE_FILE.exists() else {}
 WRITTEN = set()
 LOGO_CACHE = {}
+TLOGO = {}
+META_TODO = {}
 STATUS = {}
 NOTES = []
 ACCENT = (229, 9, 20, 255)
@@ -117,6 +122,35 @@ def cert_in(kind, d):
     return ""
 
 
+def ott_date(d):
+    """Latest digital / TV release date in our country that is not in the future."""
+    best = ""
+    for c in (d.get("release_dates") or {}).get("results", []):
+        if c.get("iso_3166_1") == COUNTRY:
+            for x in c.get("release_dates", []):
+                ds = (x.get("release_date") or "")[:10]
+                if x.get("type") in (4, 6) and ds and ds <= str(TODAY) and ds > best:
+                    best = ds
+    return best
+
+
+def best_logo(d):
+    logos = [l for l in (d.get("images") or {}).get("logos", [])
+             if (l.get("file_path") or "").lower().endswith(".png")]
+    logos.sort(key=lambda l: (l.get("iso_639_1") == "en", l.get("vote_average") or 0, l.get("width") or 0),
+               reverse=True)
+    return logos[0]["file_path"] if logos else None
+
+
+def latest_season(d):
+    best = (0, "")
+    for s in d.get("seasons") or []:
+        ad = s.get("air_date") or ""
+        if s.get("season_number", 0) > 0 and ad and ad <= str(TODAY) and ad > best[1]:
+            best = (s["season_number"], ad)
+    return best
+
+
 def movie_date(d):
     best = ""
     for c in (d.get("release_dates") or {}).get("results", []):
@@ -140,12 +174,12 @@ def year_range(kind, d):
 
 def details(kind, tid):
     """kind is 'movie' or 'tv'."""
-    key = f"v3:{kind}:{tid}"
+    key = f"v4:{kind}:{tid}"
     hit = CACHE.get(key)
     if hit and time.time() - hit["t"] < 3 * 86400:
         return hit
-    extra = "external_ids,release_dates" if kind == "movie" else "external_ids,content_ratings"
-    d = tmdb(f"/{kind}/{tid}", append_to_response=extra, language="en-US")
+    extra = ("external_ids,release_dates" if kind == "movie" else "external_ids,content_ratings") + ",images"
+    d = tmdb(f"/{kind}/{tid}", append_to_response=extra, language="en-US", include_image_language="en,null")
     imdb = d.get("imdb_id") or (d.get("external_ids") or {}).get("imdb_id")
     rating = d.get("vote_average") or 0
     if OMDB_KEY and imdb:
@@ -168,6 +202,13 @@ def details(kind, tid):
         "rating": round(float(rating), 1),
         "img": f"https://image.tmdb.org/t/p/w780{path}" if path else None,
     }
+    lg = best_logo(d)
+    rec["logo"] = f"https://image.tmdb.org/t/p/w500{lg}" if lg else None
+    if kind == "movie":
+        rec["ott_date"] = ott_date(d)
+    else:
+        sn, sd = latest_season(d)
+        rec["season"], rec["season_date"] = sn, sd
     CACHE[key] = rec
     return rec
 
@@ -242,18 +283,37 @@ def tmdb_provider_top(kind, provider_ids):
 
 
 def tmdb_provider_new(kind, provider_ids, start):
-    key = "primary_release_date" if kind == "movie" else "first_air_date"
     ep = "/discover/movie" if kind == "movie" else "/discover/tv"
-    params = {"watch_region": COUNTRY, "with_watch_providers": "|".join(provider_ids),
-              "with_watch_monetization_types": "flatrate|free|ads", "sort_by": "popularity.desc",
-              f"{key}.gte": str(start), f"{key}.lte": str(TODAY)}
+    base = {"watch_region": COUNTRY, "with_watch_providers": "|".join(provider_ids),
+            "with_watch_monetization_types": "flatrate|free|ads", "sort_by": "popularity.desc",
+            "language": "en-US"}
+    if kind == "movie":
+        queries = [
+            {"primary_release_date.gte": str(start), "primary_release_date.lte": str(TODAY)},
+            # OTT premiere of films that released in cinemas earlier (digital / TV release in our country)
+            {"region": COUNTRY, "with_release_type": "4|6",
+             "release_date.gte": str(start), "release_date.lte": str(TODAY)},
+        ]
+    else:
+        queries = [
+            {"first_air_date.gte": str(start), "first_air_date.lte": str(TODAY)},   # brand-new shows
+            {"air_date.gte": str(start), "air_date.lte": str(TODAY)},               # new seasons / episodes
+        ]
     ids = []
-    for page in (1, 2, 3):
-        params["page"] = page
-        res = tmdb(ep, **params).get("results", [])
-        ids += [r["id"] for r in res]
-        if len(res) < 20:
-            break
+    for q in queries:
+        params = dict(base, **q)
+        for page in range(1, NEW_PAGES + 1):
+            params["page"] = page
+            try:
+                res = tmdb(ep, **params).get("results", [])
+            except Exception as e:
+                note("TMDB new page failed", kind, page, e)
+                break
+            for r in res:
+                if r["id"] not in ids:
+                    ids.append(r["id"])
+            if len(res) < 20:
+                break
     return ids
 
 
@@ -272,7 +332,12 @@ def tudum_titles(rows, cc, kind):
     want = "film" if kind == "movie" else "tv"
     sel = [r for r in rows if r["week"] == latest and (r.get("category") or "").lower().startswith(want)]
     sel.sort(key=lambda r: int(r["weekly_rank"]))
-    return [r["show_title"].split(" // ")[0].strip() for r in sel]
+    out = []
+    for r in sel:
+        t = r["show_title"].split(" // ")[0].strip()
+        t = re.sub(r":\s*(season|limited series|part|volume|chapter|series)\b.*$", "", t, flags=re.I).strip()
+        out.append(t)
+    return out
 
 
 # ---------------------------------------------------------------- FlixPatrol
@@ -433,7 +498,7 @@ def cinema_ids(now):
                     tid = resolve("movie", t, y)
                 except Exception:
                     tid = None
-                if tid:
+                    if tid:
                     rec = details("movie", tid)
                     try:
                         d = dt.date.fromisoformat(rec["date"])
@@ -480,6 +545,54 @@ def font(size):
     return ImageFont.load_default()
 
 
+FONT_DIR = ROOT / "fonts"
+
+
+def inter(size, weight="ExtraBold"):
+    """Inter from ./fonts (Inter-Black.otf / Inter-ExtraBold.otf), else DejaVu Bold."""
+    for p in (FONT_DIR / f"Inter-{weight}.otf", FONT_DIR / f"Inter-{weight}.ttf"):
+        try:
+            return ImageFont.truetype(str(p), size)
+        except OSError:
+            pass
+    return font(size)
+
+
+def spaced_width(d, text, f, sp):
+    return sum(d.textlength(c, font=f) for c in text) + sp * max(len(text) - 1, 0)
+
+
+def put_text(im, cx, y, text, f, fill, sp=0, center=True):
+    """Text with soft shadow, optional letter spacing. cx is centre (or left edge if center=False)."""
+    lay = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    ld = ImageDraw.Draw(lay)
+    w = spaced_width(ld, text, f, sp)
+    x = cx - w / 2 if center else cx
+    x = max(12, x)
+    sh = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    sd = ImageDraw.Draw(sh)
+    xx = x
+    for c in text:
+        sd.text((xx + 1, y + 2), c, font=f, fill=(0, 0, 0, 200))
+        xx += sd.textlength(c, font=f) + sp
+    im = Image.alpha_composite(im, sh.filter(ImageFilter.GaussianBlur(3)))
+    xx = x
+    for c in text:
+        ld.text((xx, y), c, font=f, fill=fill)
+        xx += ld.textlength(c, font=f) + sp
+    return Image.alpha_composite(im, lay), w
+
+
+def star(im, cx, cy, r, fill):
+    import math
+    pts = []
+    for i in range(10):
+        a = -math.pi / 2 + i * math.pi / 5
+        rr = r if i % 2 == 0 else r * 0.42
+        pts.append((cx + rr * math.cos(a), cy + rr * math.sin(a)))
+    ImageDraw.Draw(im).polygon(pts, fill=fill)
+
+
 def short_genre(g):
     g = (g or "").split(" & ")[0].strip()
     return "Sci-Fi" if g.lower() == "science fiction" else g
@@ -507,47 +620,109 @@ def overlay(im, rgb, mask, opacity=1.0):
 
 
 def draw_number(im, rank):
-    """Transparent glass number: background shows through, bright rim, glossy top."""
+    """Big smoky glass number (frosted, darker than the art, bright thin rim, soft shadow)."""
     txt = str(rank)
-    f = font(250 if rank < 10 else 190)
+    size = 240 if rank < 10 else 168
+    f = inter(size, "Black")
     l, t, r, b = f.getbbox(txt)
     w, h = r - l, b - t
-    x = 36
-    top = 24 if rank < 10 else 24 + int(0.729 * (250 - 190))
-    mask = Image.new("L", im.size, 0)
-    ImageDraw.Draw(mask).text((x - l, top - t), txt, font=f, fill=255)
+    x = 46 if rank < 10 else 34
+    top = 214 - h
+    raw = Image.new("L", im.size, 0)
+    ImageDraw.Draw(raw).text((x - l, top - t), txt, font=f, fill=255)
+    # rounded corners like the reference
+    mask = raw.filter(ImageFilter.GaussianBlur(5)).point(lambda p: 255 if p > 135 else 0).filter(ImageFilter.GaussianBlur(0.7))
 
-    # soft shadow around the glass
-    im = overlay(im, (0, 0, 0), mask.filter(ImageFilter.GaussianBlur(11)), 0.38)
-    # frosted glass: slightly blurred background inside the digit
-    frost = im.filter(ImageFilter.GaussianBlur(5))
-    im = overlay(im, frost, mask, 0.45)
-    # light-to-dark tint (stays see-through)
+    # soft shadow
+    sh = ImageChops.offset(mask, 3, 7).filter(ImageFilter.GaussianBlur(12))
+    im = overlay(im, (0, 0, 0), sh, 0.55)
+    # frosted background inside the digit
+    frost = im.filter(ImageFilter.GaussianBlur(7))
+    im = overlay(im, frost, mask, 0.6)
+    # smoky tint: lighter at the top, dark at the bottom
     tint = Image.new("RGBA", im.size)
     td = ImageDraw.Draw(tint)
     for yy in range(im.size[1]):
         k = min(max((yy - top) / max(h, 1), 0), 1)
-        c = int(235 - 215 * k)
-        td.line([(0, yy), (im.size[0], yy)], fill=(c, c, c, 255))
-    im = overlay(im, tint, mask, 0.30)
-    # glossy highlight on the upper part
+        c = int(125 - 95 * k)
+        td.line([(0, yy), (im.size[0], yy)], fill=(c, c, c + 2, 255))
+    im = overlay(im, tint, mask, 0.74)
+    # gloss on the upper half
     gloss = Image.new("L", im.size, 0)
     gd = ImageDraw.Draw(gloss)
     for yy in range(im.size[1]):
-        k = (yy - top) / max(h * 0.6, 1)
+        k = (yy - top) / max(h * 0.55, 1)
         if 0 <= k <= 1:
             gd.line([(0, yy), (im.size[0], yy)], fill=int(255 * (1 - k)))
-    im = overlay(im, (255, 255, 255), ImageChops.multiply(mask, gloss), 0.20)
-    # glass edges: bright rim, light top-left, dark bottom-right, inner thickness line
-    rim = ImageChops.subtract(mask, mask.filter(ImageFilter.MinFilter(5)))
-    im = overlay(im, (255, 255, 255), rim, 0.60)
-    light = ImageChops.subtract(mask, ImageChops.offset(mask, 4, 4))
-    im = overlay(im, (255, 255, 255), light, 0.80)
-    dark = ImageChops.subtract(mask, ImageChops.offset(mask, -4, -4))
-    im = overlay(im, (0, 0, 0), dark, 0.40)
-    line = ImageChops.subtract(mask.filter(ImageFilter.MinFilter(15)), mask.filter(ImageFilter.MinFilter(19)))
-    im = overlay(im, (255, 255, 255), line, 0.28)
+    im = overlay(im, (255, 255, 255), ImageChops.multiply(mask, gloss), 0.16)
+    # edges: thin bright rim all round, stronger on top-left, dark on bottom-right
+    rim = ImageChops.subtract(mask, mask.filter(ImageFilter.MinFilter(3)))
+    im = overlay(im, (255, 255, 255), rim, 0.16)
+    light = ImageChops.subtract(mask, ImageChops.offset(mask, 3, 3))
+    im = overlay(im, (255, 255, 255), light, 0.38)
+    dark = ImageChops.subtract(mask, ImageChops.offset(mask, -3, -3))
+    im = overlay(im, (0, 0, 0), dark, 0.22)
     return im, x + w / 2
+
+
+def fetch_title_logo(url):
+    """Title logo PNG (transparent). Dark logos are turned white so they show on the dark card."""
+    if not url:
+        return None
+    if url not in TLOGO:
+        try:
+            r = S.get(url, timeout=25)
+            r.raise_for_status()
+            lg = Image.open(io.BytesIO(r.content)).convert("RGBA")
+            px = lg.resize((48, 48)).getdata()
+            tot = sum(p[3] for p in px) or 1
+            lum = sum((0.3 * p[0] + 0.59 * p[1] + 0.11 * p[2]) * p[3] for p in px) / tot
+            if lum < 60:
+                white = Image.new("RGBA", lg.size, (255, 255, 255, 255))
+                white.putalpha(lg.split()[3])
+                lg = white
+            TLOGO[url] = lg
+        except Exception:
+            TLOGO[url] = None
+    return TLOGO[url]
+
+
+def draw_title_logo(im, rec):
+    """Movie/series title artwork at the bottom-right (text fallback when no logo exists)."""
+    lg = fetch_title_logo(rec.get("logo"))
+    box_w, box_h, mr, mb = 270, 112, 24, 22
+    if lg is not None:
+        k = min(box_w / lg.width, box_h / lg.height)
+        lg = lg.resize((max(1, int(lg.width * k)), max(1, int(lg.height * k))), Image.LANCZOS)
+        x, y = im.width - mr - lg.width, im.height - mb - lg.height
+        sh = Image.new("RGBA", im.size, (0, 0, 0, 0))
+        blk = Image.new("RGBA", lg.size, (0, 0, 0, 255))
+        blk.putalpha(lg.split()[3].point(lambda p: int(p * 0.7)))
+        sh.alpha_composite(blk, (x + 2, y + 4))
+        im = Image.alpha_composite(im, sh.filter(ImageFilter.GaussianBlur(6)))
+        im.alpha_composite(lg, (x, y))
+        return im
+    title = rec.get("title") or ""
+    if not title or any(ord(c) > 0x24F for c in title):   # non-latin: skip, the app shows the title anyway
+        return im
+    f = inter(36, "Black")
+    d = ImageDraw.Draw(im)
+    words, lines, cur = title.upper().split(), [], ""
+    for wd in words:
+        trial = (cur + " " + wd).strip()
+        if d.textlength(trial, font=f) <= box_w or not cur:
+            cur = trial
+        else:
+            lines.append(cur)
+            cur = wd
+    lines.append(cur)
+    lines = lines[:3]
+    y = im.height - mb - len(lines) * 42
+    for ln in lines:
+        w = d.textlength(ln, font=f)
+        im, _ = put_text(im, im.width - mr - w, y, ln, f, (255, 255, 255, 255), center=False)
+        y += 42
+    return im
 
 
 def draw_provider(im, prov, logo_img, ax, y, center):
@@ -582,32 +757,35 @@ def draw_provider(im, prov, logo_img, ax, y, center):
 
 
 def render_poster(base, rec, rank, prov, logo_img):
-    """Top 10 card: big glass number, genre / years / rating, platform logo."""
+    """Top 10 card: big glass number, genre / years / rating, platform logo, title logo."""
     im = ImageOps.fit(base.convert("RGBA"), (640, 360))
     tint = tint_color(im)
     left = Image.new("L", im.size, 0)
     bottom = Image.new("L", im.size, 0)
     dl, db = ImageDraw.Draw(left), ImageDraw.Draw(bottom)
     for x in range(640):
-        dl.line([(x, 0), (x, 360)], fill=int(255 * max(0, 1 - x / 430)))
-    for y in range(170, 360):
-        db.line([(0, y), (640, y)], fill=int(255 * (y - 170) / 190))
-    im = overlay(im, (0, 0, 0), left, 0.78)
-    im = overlay(im, (0, 0, 0), bottom, 0.8)
+        dl.line([(x, 0), (x, 360)], fill=int(255 * max(0, 1 - x / 400)))
+    for y in range(150, 360):
+        db.line([(0, y), (640, y)], fill=int(255 * (y - 150) / 210))
+    im = overlay(im, (0, 0, 0), left, 0.70)
+    im = overlay(im, (0, 0, 0), bottom, 0.72)
     im, cx = draw_number(im, rank)
-    d = ImageDraw.Draw(im)
-    f = font(22)
-    lines = [(short_genre(rec["genre"]).upper(), tint), (rec.get("yrange") or rec["year"], tint)]
+    f = inter(23, "ExtraBold")
+    y = 230
+    for text, sp in ((short_genre(rec["genre"]).upper(), 2), (rec.get("yrange") or rec["year"], 1)):
+        if text:
+            im, _ = put_text(im, cx, y, text, f, tint, sp)
+            y += 28
     if rec["rating"]:
-        lines.append((f"\u2605 {rec['rating']}", (245, 245, 245, 255)))
-    y = 224
-    for text, col in lines:
-        if not text:
-            continue
-        w = d.textlength(text, font=f)
-        d.text((max(12, cx - w / 2), y), text, font=f, fill=col, stroke_width=1, stroke_fill=(0, 0, 0, 255))
-        y += 28
+        rt = str(rec["rating"])
+        wd = ImageDraw.Draw(im).textlength(rt, font=f)
+        total = 20 + 8 + wd
+        sx = cx - total / 2
+        star(im, sx + 10, y + 15, 10, tint)
+        im, _ = put_text(im, sx + 28, y, rt, f, tint, 0, center=False)
     draw_provider(im, prov, logo_img, cx, 318, True)
+    if "top10" in LOGO_MODES:
+        im = draw_title_logo(im, rec)
     return im.convert("RGB")
 
 
@@ -651,6 +829,8 @@ def render_info(base, rec, prov, logo_img, tag, weekday=False):
         d.text((cx + 9, y + 5), rec["cert"], font=pf, fill=(255, 255, 255, 255))
     if prov:
         draw_provider(im, prov, logo_img, 30, 318, False)
+    if ("cinema" if weekday else "new") in LOGO_MODES:
+        im = draw_title_logo(im, rec)
     return im.convert("RGB")
 
 
@@ -680,22 +860,50 @@ def make_poster(rec, rank, dest, prov, mode, tag):
 
 
 # ---------------------------------------------------------------- Catalog building
+def eff_date(tk, rec):
+    """Date a title counts as 'new' on the platform: OTT premiere (movies) / latest season (series)
+    or the original date, whichever falls in the window."""
+    alt = rec.get("ott_date") if tk == "movie" else rec.get("season_date")
+    for s in (alt, rec.get("date")):
+        try:
+            d = dt.date.fromisoformat((s or "")[:10])
+        except Exception:
+            continue
+        if SINCE <= d <= TODAY:
+            return d
+    return None
+
+
 def build_catalog(catid, name, kind, ids, mode, prov, src, tag=None):
     tkind = "movie" if kind == "movie" else "tv"
     metas = []
-    for rank, tid in enumerate(ids, 1):
+    rank = 0
+    for tid in ids:
+        if mode == "top10" and rank >= 10:
+            break
         try:
             rec = details(tkind, tid)
             if not rec["img"]:
                 continue
-            fname = f"{catid}-{rank}.jpg"
-            make_poster(rec, rank, POSTERS / fname, prov, mode, tag)
+            n = rank + 1
+            rv, tag_i = dict(rec), tag
+            if mode == "new":
+                d = eff_date(tkind, rec)
+                if d:
+                    rv["date"] = str(d)
+                    if tkind == "tv" and (rec.get("season") or 1) > 1 and rec.get("season_date") == str(d):
+                        tag_i = f"NEW SEASON {rec['season']}"
+            fname = f"{catid}-{n}.jpg"
+            make_poster(rv, n, POSTERS / fname, prov, mode, tag_i)
+            rank = n
             WRITTEN.add(("posters", fname))
-            nice_date = fmt_date(rec.get("date")).title()
+            nice_date = fmt_date(rv.get("date")).title()
             desc = " | ".join(x for x in (f"Release: {nice_date}" if nice_date else "",
                                           f"Age rating: {rec['cert']}" if rec.get("cert") else "") if x)
+            mid = rec["imdb"] or f"tmdb:{tid}"
+            META_TODO[(kind, mid)] = (tkind, tid, rec["imdb"])
             metas.append({
-                "id": rec["imdb"] or f"tmdb:{tid}",
+                "id": mid,
                 "type": kind,
                 "name": rec["title"],
                 "poster": f"{BASE}/posters/{fname}?v={tid}-{POSTER_VER}-{int(time.time()) // 86400}",
@@ -719,43 +927,119 @@ def build_catalog(catid, name, kind, ids, mode, prov, src, tag=None):
     return {"type": kind, "id": catid, "name": name}
 
 
+# ---------------------------------------------------------------- meta files (so taps never say 'No addon provides meta')
+def tmdb_img(path, size="w500"):
+    return f"https://image.tmdb.org/t/p/{size}{path}" if path else None
+
+
+def write_meta(kind, mid, tk, tid):
+    common = dict(append_to_response="credits,images", language="en-US", include_image_language="en,null")
+    d = tmdb(f"/{tk}/{tid}", **common)
+    lg = best_logo(d)
+    cast = [c["name"] for c in (d.get("credits") or {}).get("cast", [])[:8]]
+    meta = {
+        "id": mid, "type": kind,
+        "name": d.get("title") or d.get("name") or "",
+        "poster": tmdb_img(d.get("poster_path")),
+        "background": tmdb_img(d.get("backdrop_path"), "w1280"),
+        "logo": tmdb_img(lg),
+        "description": d.get("overview") or "",
+        "releaseInfo": year_range(tk, d),
+        "genres": [g["name"] for g in d.get("genres", [])],
+        "cast": cast,
+    }
+    if d.get("vote_average"):
+        meta["imdbRating"] = str(round(d["vote_average"], 1))
+    rel = (d.get("release_date") or d.get("first_air_date") or "")[:10]
+    if rel:
+        meta["released"] = rel + "T00:00:00.000Z"
+    if tk == "movie":
+        if d.get("runtime"):
+            meta["runtime"] = f"{d['runtime']} min"
+        crew = (d.get("credits") or {}).get("crew", [])
+        meta["director"] = [c["name"] for c in crew if c.get("job") == "Director"][:3]
+    else:
+        seasons = [s["season_number"] for s in d.get("seasons", []) if s.get("season_number", 0) > 0]
+        videos = []
+        for i in range(0, len(seasons), 15):
+            chunk = seasons[i:i + 15]
+            dd = tmdb(f"/tv/{tid}", append_to_response=",".join(f"season/{n}" for n in chunk), language="en-US")
+            for n in chunk:
+                for ep in (dd.get(f"season/{n}") or {}).get("episodes", []):
+                    if not ep.get("air_date"):
+                        continue
+                    videos.append({
+                        "id": f"{mid}:{n}:{ep['episode_number']}",
+                        "title": ep.get("name") or f"Episode {ep['episode_number']}",
+                        "season": n, "episode": ep["episode_number"],
+                        "released": ep["air_date"] + "T00:00:00.000Z",
+                        "overview": ep.get("overview") or "",
+                        "thumbnail": tmdb_img(ep.get("still_path"), "w300"),
+                    })
+        meta["videos"] = videos
+    sub = OUT / "meta" / kind
+    sub.mkdir(parents=True, exist_ok=True)
+    fname = f"{mid}.json"
+    (sub / fname).write_text(json.dumps({"meta": meta}, ensure_ascii=False), encoding="utf-8")
+    WRITTEN.add((f"meta/{kind}", fname))
+
+
+def write_all_meta():
+    n = 0
+    for (kind, mid), (tk, tid, imdb) in META_TODO.items():
+        if imdb and not META_ALL:
+            continue       # Cinemeta (or any meta addon) already serves tt ids
+        try:
+            write_meta(kind, mid, tk, tid)
+            n += 1
+        except Exception as e:
+            note("meta failed", mid, e)
+    log("Meta files:", n)
+
+
 def slugify(s):
     return re.sub(r"[^a-z0-9]+", "-", s.lower().replace("+", "")).strip("-")
 
 
 def top_ids(plat, kind, tudum, flix, jw_short):
+    """Returns (ids, source). Netflix: Tudum then FlixPatrol fills the gaps up to 10.
+    Others: FlixPatrol, then (only if < 3 found) JustWatch popularity / Gemini / TMDB popularity."""
     name = plat["name"]
+    ids, src = [], []
+
+    def add(new, label):
+        n0 = len(ids)
+        for t in new:
+            if t not in ids and len(ids) < 10:
+                ids.append(t)
+        if len(ids) > n0:
+            src.append(label)
+
     if name == "Netflix" and tudum:
         try:
-            ids = resolve_many(kind, tudum_titles(tudum, COUNTRY, kind))
-            if len(ids) >= 3:
-                return ids, "tudum"
+            add(resolve_many(kind, tudum_titles(tudum, COUNTRY, kind), limit=20), "tudum")
         except Exception as e:
             note("Tudum failed", e)
-    if flix:
+    if len(ids) < 10 and flix:
         try:
-            ids = resolve_many(kind, flix.get(kind, []))
-            if len(ids) >= 3:
-                return ids, "flixpatrol"
+            add(resolve_many(kind, flix.get(kind, []), limit=20), "flixpatrol")
         except Exception as e:
             note("FlixPatrol resolve failed", name, e)
+    if len(ids) >= 3:
+        return ids, "+".join(src)
     if jw_short:
         try:
-            ids = resolve_many(kind, jw_popular(jw_short, kind, first=30))
-            if len(ids) >= 3:
-                return ids, "justwatch"
+            add(resolve_many(kind, jw_popular(jw_short, kind, first=30)), "justwatch-popular")
         except Exception as e:
             note("JustWatch top failed", name, e)
-    if CFG.get("use_gemini") and GEMINI_KEY:
+    if len(ids) < 3 and CFG.get("use_gemini") and GEMINI_KEY:
         try:
             m, s = gemini_top(name)
-            ids = resolve_many(kind, m if kind == "movie" else s)
-            if len(ids) >= 3:
-                time.sleep(4)
-                return ids, "gemini"
+            add(resolve_many(kind, m if kind == "movie" else s), "gemini")
+            time.sleep(4)
         except Exception as e:
             note("Gemini failed", name, e)
-    return None, "tmdb"
+    return ids, "+".join(src) or "none"
 
 
 def new_ids(kind, tk, jw_short, tm_ids):
@@ -763,15 +1047,7 @@ def new_ids(kind, tk, jw_short, tm_ids):
     if jw_short:
         try:
             items = jw_popular(jw_short, kind, first=100, year_min=SINCE.year)
-            keep = []
-            for i in items:
-                try:
-                    d = dt.date.fromisoformat((i.get("date") or "")[:10])
-                except Exception:
-                    continue
-                if SINCE <= d <= TODAY:
-                    keep.append(i)
-            ids = resolve_many(kind, keep, limit=NEW_LIMIT * 2)
+            ids = resolve_many(kind, items, limit=NEW_LIMIT * 2)
             if ids:
                 src.append("justwatch")
         except Exception as e:
@@ -787,10 +1063,10 @@ def new_ids(kind, tk, jw_short, tm_ids):
     keep = []
     for tid in ids:
         try:
-            d = dt.date.fromisoformat(details(tk, tid)["date"])
+            d = eff_date(tk, details(tk, tid))
         except Exception:
             continue
-        if SINCE <= d <= TODAY:
+        if d:
             keep.append((d, tid))
     keep.sort(key=lambda x: x[0], reverse=True)  # newest first
     return [t for _, t in keep][:NEW_LIMIT], "+".join(src) or "none"
@@ -802,6 +1078,7 @@ def main():
     POSTERS.mkdir(parents=True, exist_ok=True)
     for t in ("movie", "series"):
         (OUT / "catalog" / t).mkdir(parents=True, exist_ok=True)
+        (OUT / "meta" / t).mkdir(parents=True, exist_ok=True)
 
     try:
         tudum = load_tudum()
@@ -825,7 +1102,7 @@ def main():
             ids, src = cinema_ids(now)
             lo, hi = cinema_window(now)
             if now:
-                name, tag, catid = f"Now Showing in Cinema - {TODAY.strftime('%B')}", "NOW SHOWING", f"{PFX}-cinema-now"
+                name, tag, catid = "Now Showing in Cinema", "NOW SHOWING", f"{PFX}-cinema-now"
             else:
                 name, tag, catid = "Upcoming in Cinema", "COMING SOON", f"{PFX}-cinema-upcoming"
             c = build_catalog(catid, name, "movie", ids, "cinema", None, src, tag)
@@ -849,12 +1126,16 @@ def main():
             note("JustWatch package not found for", name)
         prov = {"name": name, "slug": slug, "logo": logo}
         flix = None
-        if plat.get("flixpatrol") and not (name == "Netflix" and tudum):
+        if plat.get("flixpatrol") and plat.get("top10", True):
             flix = flix_fetch(plat["flixpatrol"])
             time.sleep(1)
 
         # new releases first, then top 10
         for section in ("new", "top"):
+            if section == "new" and not plat.get("new", True):
+                continue
+            if section == "top" and not plat.get("top10", True):
+                continue
             for kind in ("movie", "series"):
                 tk = "movie" if kind == "movie" else "tv"
                 try:
@@ -864,18 +1145,15 @@ def main():
                         mode = "new"
                     else:
                         ids, src = top_ids(plat, kind, tudum, flix, jw_short)
-                        if ids is None and tm_ids:
-                            ids = tmdb_provider_top(tk, tm_ids)
+                        if len(ids) < 3 and tm_ids:
+                            ids, src = tmdb_provider_top(tk, tm_ids), "tmdb-popular"
                         label = "Top 10"
                         mode = "top10"
                     if not ids:
                         note("no data for", name, section, kind)
                         continue
                     catid = f"{PFX}-{slug}-{section}-{kind}"
-                    if mode == "new":
-                        title = f"{name} {label}"
-                    else:
-                        title = f"{name} {label} - {'Movies' if kind == 'movie' else 'Series'}"
+                    title = f"{name} {label}"   # the app adds " - Movies" / " - Series" itself
                     c = build_catalog(catid, title, kind, ids, mode, prov, src, "NEW" if mode == "new" else None)
                     if c:
                         cats.append(c)
@@ -886,12 +1164,16 @@ def main():
     if not cats:
         sys.exit("No catalogs produced; keeping old files")
 
+    write_all_meta()
+    (OUT / ".nojekyll").write_text("", encoding="utf-8")
+
     manifest = {
         "id": "community.ott.top10",
         "version": f"1.0.{int(time.time()) // 3600}",
         "name": "OTT Top 10",
         "description": "Cinema, new releases and Top 10 per OTT platform.",
-        "resources": ["catalog"],
+        "resources": ["catalog", {"name": "meta", "types": ["movie", "series"],
+                                  "idPrefixes": ["tt", "tmdb:"] if META_ALL else ["tmdb:"]}],
         "types": ["movie", "series"],
         "catalogs": cats,
         "behaviorHints": {"configurable": False},
@@ -901,7 +1183,7 @@ def main():
         {"updated": NOW.strftime("%Y-%m-%d %H:%M IST"), "catalogs": STATUS, "notes": NOTES[-60:]},
         ensure_ascii=False, indent=1), encoding="utf-8")
 
-    for sub in ("posters", "catalog/movie", "catalog/series"):
+    for sub in ("posters", "catalog/movie", "catalog/series", "meta/movie", "meta/series"):
         for f in (OUT / sub).glob("*"):
             if (sub, f.name) not in WRITTEN:
                 f.unlink()
@@ -913,3 +1195,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+            
