@@ -18,6 +18,7 @@ import time
 from pathlib import Path
 
 import requests
+from concurrent.futures import ThreadPoolExecutor
 from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont, ImageOps
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -40,10 +41,12 @@ JW_URL = "https://apis.justwatch.com/graphql"
 NOW = dt.datetime.now(dt.timezone.utc) + dt.timedelta(hours=5, minutes=30)
 TODAY = NOW.date()  # India date
 NEW_DAYS = int(CFG.get("new_release_days", 30))
-NEW_LIMIT = int(CFG.get("new_limit", 60))
-NEW_PAGES = int(CFG.get("new_pages", 6))
-LOGO_MODES = set(CFG.get("title_logo_on", ["top10"]))  # top10 / new / cinema
-META_ALL = bool(CFG.get("meta_for_all", False))
+NEW_LIMIT = int(CFG.get("new_limit", 150))
+NEW_PAGES = int(CFG.get("new_pages", 15))
+LOGO_MODES = set(CFG.get("title_logo_on", ["top10", "new", "cinema"]))  # top10 / new / cinema
+META_ALL = bool(CFG.get("meta_for_all", True))
+ID_VER = str(CFG.get("catalog_version", "2"))
+IMG_LANGS = "en,null,hi,bn,ta,te,ml,kn,mr,pa,gu,ur,or,as,ko,ja,zh,th,id,es,fr,de,it,pt,ru,tr,ar"
 CINEMA_LIMIT = int(CFG.get("cinema_limit", 60))
 
 
@@ -135,10 +138,17 @@ def ott_date(d):
 
 
 def best_logo(d):
+    """TMDB title artwork (PNG). Original-language logo first, then English, then language-neutral."""
     logos = [l for l in (d.get("images") or {}).get("logos", [])
              if (l.get("file_path") or "").lower().endswith(".png")]
-    logos.sort(key=lambda l: (l.get("iso_639_1") == "en", l.get("vote_average") or 0, l.get("width") or 0),
-               reverse=True)
+    orig = (d.get("original_language") or "").lower()
+
+    def rank(l):
+        iso = l.get("iso_639_1")
+        pref = 3 if iso == orig else 2 if iso == "en" else 1 if iso is None else 0
+        return (pref, l.get("vote_average") or 0, l.get("width") or 0)
+
+    logos.sort(key=rank, reverse=True)
     return logos[0]["file_path"] if logos else None
 
 
@@ -174,12 +184,12 @@ def year_range(kind, d):
 
 def details(kind, tid):
     """kind is 'movie' or 'tv'."""
-    key = f"v4:{kind}:{tid}"
+    key = f"v5:{kind}:{tid}"
     hit = CACHE.get(key)
     if hit and time.time() - hit["t"] < 3 * 86400:
         return hit
     extra = ("external_ids,release_dates" if kind == "movie" else "external_ids,content_ratings") + ",images"
-    d = tmdb(f"/{kind}/{tid}", append_to_response=extra, language="en-US", include_image_language="en,null")
+    d = tmdb(f"/{kind}/{tid}", append_to_response=extra, language="en-US", include_image_language=IMG_LANGS)
     imdb = d.get("imdb_id") or (d.get("external_ids") or {}).get("imdb_id")
     rating = d.get("vote_average") or 0
     if OMDB_KEY and imdb:
@@ -389,6 +399,35 @@ JW_POP = """query Pop($country: Country!, $language: Language!, $first: Int!, $f
     edges { node { objectType
       content(country: $country, language: $language) {
         title originalReleaseYear originalReleaseDate externalIds { imdbId tmdbId } } } } } }"""
+
+
+JW_POP2 = """query Pop($country: Country!, $language: Language!, $first: Int!, $after: String,
+  $filter: TitleFilter, $sort: PopularTitlesSorting!) {
+  popularTitles(country: $country, first: $first, after: $after, filter: $filter, sortBy: $sort) {
+    pageInfo { endCursor hasNextPage }
+    edges { node { objectType
+      content(country: $country, language: $language) {
+        title originalReleaseYear originalReleaseDate externalIds { imdbId tmdbId } } } } } }"""
+
+
+def jw_recent(packages, kind, year_min, pages=6):
+    """All titles of this year+ on the platform (JustWatch), newest release year first, paged."""
+    flt = {"packages": packages, "objectTypes": ["MOVIE" if kind == "movie" else "SHOW"],
+           "releaseYear": {"min": year_min}}
+    out, after = [], None
+    for _ in range(pages):
+        d = jw_query(JW_POP2, {"country": COUNTRY, "language": "en", "first": 100, "after": after,
+                               "filter": flt, "sort": "RELEASE_YEAR"})["popularTitles"]
+        for e in d["edges"]:
+            c = (e.get("node") or {}).get("content") or {}
+            ext = c.get("externalIds") or {}
+            out.append({"title": c.get("title"), "year": c.get("originalReleaseYear"),
+                        "date": c.get("originalReleaseDate"), "tmdb": ext.get("tmdbId")})
+        pi = d.get("pageInfo") or {}
+        if not pi.get("hasNextPage") or not pi.get("endCursor"):
+            break
+        after = pi["endCursor"]
+    return out
 
 
 def jw_popular(packages, kind, first=100, year_min=None):
@@ -605,7 +644,7 @@ def fmt_date(s, weekday=False):
 def tint_color(im):
     r, g, b = im.convert("RGB").crop((0, 150, 320, 360)).resize((1, 1), Image.LANCZOS).getpixel((0, 0))
     h, s, _ = colorsys.rgb_to_hsv(r / 255, g / 255, b / 255)
-    s = min(max(s, 0.3), 0.75)
+    s = min(max(s, 0.15), 0.55)
     r, g, b = colorsys.hsv_to_rgb(h, s, 0.93)
     return (int(r * 255), int(g * 255), int(b * 255), 255)
 
@@ -616,8 +655,26 @@ def overlay(im, rgb, mask, opacity=1.0):
     return Image.alpha_composite(im, lay)
 
 
+def frost_panel(im):
+    """Left-side frosted glass panel (backdrop blur) that fades out towards the right, like the reference."""
+    blur = im.filter(ImageFilter.GaussianBlur(26))
+    pm = Image.new("L", im.size, 0)
+    pd = ImageDraw.Draw(pm)
+    for x in range(im.size[0]):
+        if x < 150:
+            a = 255
+        elif x < 360:
+            k = (x - 150) / 210
+            a = int(255 * (1 - k * k * (3 - 2 * k)))
+        else:
+            a = 0
+        pd.line([(x, 0), (x, im.size[1])], fill=a)
+    im = overlay(im, blur, pm, 1.0)
+    return overlay(im, (62, 64, 68), pm, 0.40)
+
+
 def draw_number(im, rank):
-    """Big smoky glass number (frosted, darker than the art, bright thin rim, soft shadow)."""
+    """Glass number on the frosted panel: soft shadow, frosted fill, bright rim, inner bevel."""
     txt = str(rank)
     size = 240 if rank < 10 else 168
     f = inter(size, "Black")
@@ -627,38 +684,29 @@ def draw_number(im, rank):
     top = 214 - h
     raw = Image.new("L", im.size, 0)
     ImageDraw.Draw(raw).text((x - l, top - t), txt, font=f, fill=255)
-    # rounded corners like the reference
     mask = raw.filter(ImageFilter.GaussianBlur(5)).point(lambda p: 255 if p > 135 else 0).filter(ImageFilter.GaussianBlur(0.7))
 
-    # soft shadow
-    sh = ImageChops.offset(mask, 3, 7).filter(ImageFilter.GaussianBlur(12))
-    im = overlay(im, (0, 0, 0), sh, 0.55)
-    # frosted background inside the digit
-    frost = im.filter(ImageFilter.GaussianBlur(7))
-    im = overlay(im, frost, mask, 0.6)
-    # smoky tint: lighter at the top, dark at the bottom
-    tint = Image.new("RGBA", im.size)
-    td = ImageDraw.Draw(tint)
+    im = overlay(im, (0, 0, 0), ImageChops.offset(mask, 0, 7).filter(ImageFilter.GaussianBlur(11)), 0.32)
+    # frosted fill (strong blur of what is behind) + light tint
+    im = overlay(im, im.filter(ImageFilter.GaussianBlur(30)), mask, 1.0)
+    im = overlay(im, (235, 235, 240), mask, 0.13)
+    # darker towards the bottom of the digit
+    shade = Image.new("L", im.size, 0)
+    sd = ImageDraw.Draw(shade)
     for yy in range(im.size[1]):
-        k = min(max((yy - top) / max(h, 1), 0), 1)
-        c = int(125 - 95 * k)
-        td.line([(0, yy), (im.size[0], yy)], fill=(c, c, c + 2, 255))
-    im = overlay(im, tint, mask, 0.74)
-    # gloss on the upper half
-    gloss = Image.new("L", im.size, 0)
-    gd = ImageDraw.Draw(gloss)
-    for yy in range(im.size[1]):
-        k = (yy - top) / max(h * 0.55, 1)
+        k = (yy - top) / max(h, 1)
         if 0 <= k <= 1:
-            gd.line([(0, yy), (im.size[0], yy)], fill=int(255 * (1 - k)))
-    im = overlay(im, (255, 255, 255), ImageChops.multiply(mask, gloss), 0.16)
-    # edges: thin bright rim all round, stronger on top-left, dark on bottom-right
+            sd.line([(0, yy), (im.size[0], yy)], fill=int(255 * k))
+    im = overlay(im, (0, 0, 0), ImageChops.multiply(mask, shade), 0.22)
+    # inner bevel (bright band just inside the edge) + bright rim + top-left highlight
+    inner = ImageChops.subtract(mask, mask.filter(ImageFilter.MinFilter(9))).filter(ImageFilter.GaussianBlur(2))
+    im = overlay(im, (255, 255, 255), ImageChops.multiply(inner, mask), 0.20)
     rim = ImageChops.subtract(mask, mask.filter(ImageFilter.MinFilter(3)))
-    im = overlay(im, (255, 255, 255), rim, 0.16)
+    im = overlay(im, (255, 255, 255), rim, 0.42)
     light = ImageChops.subtract(mask, ImageChops.offset(mask, 3, 3))
-    im = overlay(im, (255, 255, 255), light, 0.38)
-    dark = ImageChops.subtract(mask, ImageChops.offset(mask, -3, -3))
-    im = overlay(im, (0, 0, 0), dark, 0.22)
+    im = overlay(im, (255, 255, 255), light, 0.30)
+    dark = ImageChops.subtract(mask, ImageChops.offset(mask, -2, -2))
+    im = overlay(im, (0, 0, 0), dark, 0.18)
     return im, x + w / 2
 
 
@@ -699,26 +747,6 @@ def draw_title_logo(im, rec):
         im = Image.alpha_composite(im, sh.filter(ImageFilter.GaussianBlur(6)))
         im.alpha_composite(lg, (x, y))
         return im
-    title = rec.get("title") or ""
-    if not title or any(ord(c) > 0x24F for c in title):   # non-latin: skip, the app shows the title anyway
-        return im
-    f = inter(36, "Black")
-    d = ImageDraw.Draw(im)
-    words, lines, cur = title.upper().split(), [], ""
-    for wd in words:
-        trial = (cur + " " + wd).strip()
-        if d.textlength(trial, font=f) <= box_w or not cur:
-            cur = trial
-        else:
-            lines.append(cur)
-            cur = wd
-    lines.append(cur)
-    lines = lines[:3]
-    y = im.height - mb - len(lines) * 42
-    for ln in lines:
-        w = d.textlength(ln, font=f)
-        im, _ = put_text(im, im.width - mr - w, y, ln, f, (255, 255, 255, 255), center=False)
-        y += 42
     return im
 
 
@@ -757,15 +785,12 @@ def render_poster(base, rec, rank, prov, logo_img):
     """Top 10 card: big glass number, genre / years / rating, platform logo, title logo."""
     im = ImageOps.fit(base.convert("RGBA"), (640, 360))
     tint = tint_color(im)
-    left = Image.new("L", im.size, 0)
+    im = frost_panel(im)
     bottom = Image.new("L", im.size, 0)
-    dl, db = ImageDraw.Draw(left), ImageDraw.Draw(bottom)
-    for x in range(640):
-        dl.line([(x, 0), (x, 360)], fill=int(255 * max(0, 1 - x / 400)))
-    for y in range(150, 360):
-        db.line([(0, y), (640, y)], fill=int(255 * (y - 150) / 210))
-    im = overlay(im, (0, 0, 0), left, 0.70)
-    im = overlay(im, (0, 0, 0), bottom, 0.72)
+    db = ImageDraw.Draw(bottom)
+    for y in range(170, 360):
+        db.line([(0, y), (640, y)], fill=int(255 * (y - 170) / 190))
+    im = overlay(im, (0, 0, 0), bottom, 0.55)
     im, cx = draw_number(im, rank)
     f = inter(23, "ExtraBold")
     y = 230
@@ -845,9 +870,19 @@ def provider_logo(path):
 
 
 def make_poster(rec, rank, dest, prov, mode, tag):
-    r = S.get(rec["img"], timeout=30)
-    r.raise_for_status()
-    base = Image.open(io.BytesIO(r.content))
+    last = None
+    for _ in range(3):
+        try:
+            r = S.get(rec["img"], timeout=30)
+            r.raise_for_status()
+            base = Image.open(io.BytesIO(r.content))
+            base.load()
+            break
+        except Exception as e:
+            last = e
+            time.sleep(1.5)
+    else:
+        raise last
     logo = provider_logo(prov.get("logo")) if prov else None
     if mode == "top10":
         im = render_poster(base, rec, rank, prov, logo)
@@ -887,7 +922,7 @@ def build_catalog(catid, name, kind, ids, mode, prov, src, tag=None):
                     rv["date"] = str(d)
                     if tkind == "tv" and (rec.get("season") or 1) > 1 and rec.get("season_date") == str(d):
                         tag_i = f"NEW SEASON {rec['season']}"
-            fname = f"{catid}-{n}.jpg"
+            fname = f"{catid}-{n}-{tid}.jpg" if mode == "top10" else f"{catid}-{tid}.jpg"
             make_poster(rv, n, POSTERS / fname, prov, mode, tag_i)
             rank = n
             WRITTEN.add(("posters", fname))
@@ -927,7 +962,7 @@ def tmdb_img(path, size="w500"):
 
 
 def write_meta(kind, mid, tk, tid):
-    common = dict(append_to_response="credits,images", language="en-US", include_image_language="en,null")
+    common = dict(append_to_response="credits,images", language="en-US", include_image_language=IMG_LANGS)
     d = tmdb(f"/{tk}/{tid}", **common)
     lg = best_logo(d)
     cast = [c["name"] for c in (d.get("credits") or {}).get("cast", [])[:8]]
@@ -979,16 +1014,24 @@ def write_meta(kind, mid, tk, tid):
 
 
 def write_all_meta():
-    n = 0
+    n = skipped = 0
     for (kind, mid), (tk, tid, imdb) in META_TODO.items():
         if imdb and not META_ALL:
-            continue       # Cinemeta (or any meta addon) already serves tt ids
+            continue
+        fname = f"{mid}.json"
+        key = f"meta:{kind}:{mid}"
+        hit = CACHE.get(key)
+        if hit and time.time() - hit["t"] < 3 * 86400 and (OUT / "meta" / kind / fname).exists():
+            WRITTEN.add((f"meta/{kind}", fname))
+            skipped += 1
+            continue
         try:
             write_meta(kind, mid, tk, tid)
+            CACHE[key] = {"t": time.time()}
             n += 1
         except Exception as e:
             note("meta failed", mid, e)
-    log("Meta files:", n)
+    log("Meta files written:", n, "reused:", skipped)
 
 
 def slugify(s):
@@ -1036,16 +1079,35 @@ def top_ids(plat, kind, tudum, flix, jw_short):
     return ids, "+".join(src) or "none"
 
 
+def prefetch(tk, ids):
+    """Fetch TMDB details in parallel (fills the cache) so big lists stay fast."""
+    todo = [t for t in ids if f"v5:{tk}:{t}" not in CACHE]
+
+    def one(t):
+        try:
+            details(tk, t)
+        except Exception:
+            pass
+
+    with ThreadPoolExecutor(max_workers=8) as ex:
+        list(ex.map(one, todo))
+
+
 def new_ids(kind, tk, jw_short, tm_ids):
     ids, src = [], []
     if jw_short:
+        items = []
         try:
-            items = jw_popular(jw_short, kind, first=100, year_min=SINCE.year)
-            ids = resolve_many(kind, items, limit=NEW_LIMIT * 2)
-            if ids:
-                src.append("justwatch")
+            items += jw_recent(jw_short, kind, SINCE.year)
         except Exception as e:
-            note("JustWatch new failed", e)
+            note("JustWatch recent failed", e)
+        try:
+            items += jw_popular(jw_short, kind, first=100, year_min=SINCE.year)
+        except Exception as e:
+            note("JustWatch popular failed", e)
+        if items:
+            ids = resolve_many(kind, items, limit=2000)
+            src.append("justwatch")
     if tm_ids:
         try:
             for tid in tmdb_provider_new(tk, tm_ids, SINCE):
@@ -1054,6 +1116,7 @@ def new_ids(kind, tk, jw_short, tm_ids):
             src.append("tmdb")
         except Exception as e:
             note("TMDB new failed", e)
+    prefetch(tk, ids)
     keep = []
     for tid in ids:
         try:
@@ -1096,9 +1159,9 @@ def main():
             ids, src = cinema_ids(now)
             lo, hi = cinema_window(now)
             if now:
-                name, tag, catid = "Now Showing in Cinema", "NOW SHOWING", f"{PFX}-cinema-now"
+                name, tag, catid = "Now Showing in Cinema", "NOW SHOWING", f"{PFX}{ID_VER}-cinema-now"
             else:
-                name, tag, catid = "Upcoming in Cinema", "COMING SOON", f"{PFX}-cinema-upcoming"
+                name, tag, catid = "Upcoming in Cinema", "COMING SOON", f"{PFX}{ID_VER}-cinema-upcoming"
             c = build_catalog(catid, name, "movie", ids, "cinema", None, src, tag)
             if c:
                 cats.append(c)
@@ -1146,7 +1209,7 @@ def main():
                     if not ids:
                         note("no data for", name, section, kind)
                         continue
-                    catid = f"{PFX}-{slug}-{section}-{kind}"
+                    catid = f"{PFX}{ID_VER}-{slug}-{section}-{kind}"
                     title = f"{name} {label}"   # the app adds " - Movies" / " - Series" itself
                     c = build_catalog(catid, title, kind, ids, mode, prov, src, "NEW" if mode == "new" else None)
                     if c:
