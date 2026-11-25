@@ -3,18 +3,22 @@
   "country_name": "India",
   "bms_city": "mumbai",
   "since": "2026-10-01",
-  "new_limit": 40,
+  "new_limit": 60,
+  "new_pages": 6,
   "cinema_limit": 60,
+  "title_logo_on": ["top10"],
+  "meta_for_all": false,
   "use_gemini": false,
   "gemini_model": "gemini-2.5-flash",
   "platforms": [
     { "name": "Netflix", "match": ["netflix"], "flixpatrol": ["netflix"] },
     { "name": "Prime Video", "match": ["primevideo"], "flixpatrol": ["amazon-prime"] },
-    { "name": "JioHotstar", "match": ["hotstar"], "flixpatrol": ["jiohotstar", "hotstar"] },
+    { "name": "JioHotstar", "match": ["hotstar"], "flixpatrol": ["jiohotstar", "hotstar"], "top10": false },
+    { "name": "Crunchyroll", "match": ["crunchyroll"], "flixpatrol": ["crunchyroll"], "new": false },
     { "name": "MX Player", "match": ["mxplayer"], "flixpatrol": ["mx-player"] },
-    { "name": "SonyLIV", "match": ["sonyliv"], "flixpatrol": ["sony-liv", "sonyliv"] },
-    { "name": "Zee5", "match": ["zee5"], "flixpatrol": ["zee5"] },
+    { "name": "SonyLIV", "match": ["sonyliv"], "flixpatrol": ["sony-liv", "sonyliv"], "top10": false },
+    { "name": "Zee5", "match": ["zee5"], "flixpatrol": ["zee5"], "top10": false },
     { "name": "Apple TV+", "match": ["appletvplus"], "flixpatrol": ["apple-tv"] },
-    { "name": "Hoichoi", "match": ["hoichoi"], "flixpatrol": ["hoichoi"] }
+    { "name": "Hoichoi", "match": ["hoichoi"], "flixpatrol": ["hoichoi"], "top10": false }
   ]
 }
