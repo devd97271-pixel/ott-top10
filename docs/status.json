@@ -1,10 +1,10 @@
 {
- "updated": "2026-11-25 10:42 IST",
+ "updated": "2026-11-25 11:20 IST",
  "catalogs": {
   "in-cinema-now": {
    "name": "Now Showing in Cinema",
    "source": "tmdb",
-   "items": 55
+   "items": 57
   },
   "in-cinema-upcoming": {
    "name": "Upcoming in Cinema",
@@ -115,7 +115,6 @@
  "notes": [
   "BookMyShow failed: BookMyShow HTTP 403",
   "BookMyShow failed: BookMyShow HTTP 403",
-  "TMDB new page failed tv 5 503 Server Error: Service Unavailable for url: https://api.themoviedb.org/3/discover/tv?watch_region=IN&with_watch_providers=8&with_watch_monetization_types=flatrate%7Cfree%7Cads&sort_by=popularity.desc&language=en",
   "no data for MX Player new movie",
   "TMDB provider not found for Apple TV+",
   "JustWatch package not found for Apple TV+",
