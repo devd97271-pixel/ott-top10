@@ -402,10 +402,7 @@ def jw_popular(packages, kind, first=100, year_min=None):
         ext = c.get("externalIds") or {}
         out.append({"title": c.get("title"), "year": c.get("originalReleaseYear"),
                     "date": c.get("originalReleaseDate"), "tmdb": ext.get("tmdbId")})
-    return out
-
-
-# ---------------------------------------------------------------- Gemini (optional last resort)
+    return out# ---------------------------------------------------------------- Gemini (optional last resort)
 def gemini_top(platform):
     prompt = (
         f"Using Google Search, find the current Top 10 most-watched movies and Top 10 TV series on "
@@ -856,10 +853,7 @@ def make_poster(rec, rank, dest, prov, mode, tag):
         im = render_poster(base, rec, rank, prov, logo)
     else:
         im = render_info(base, rec, prov, logo, tag, weekday=(mode == "cinema"))
-    im.save(dest, "JPEG", quality=84)
-
-
-# ---------------------------------------------------------------- Catalog building
+    im.save(dest, "JPEG", quality=84)# ---------------------------------------------------------------- Catalog building
 def eff_date(tk, rec):
     """Date a title counts as 'new' on the platform: OTT premiere (movies) / latest season (series)
     or the original date, whichever falls in the window."""
@@ -1098,7 +1092,7 @@ def main():
 
     # ---- cinema rows (very top)
     for now in (True, False):
-                try:
+        try:
             ids, src = cinema_ids(now)
             lo, hi = cinema_window(now)
             if now:
@@ -1195,4 +1189,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-        
