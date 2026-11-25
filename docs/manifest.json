@@ -1,10 +1,20 @@
 {
  "id": "community.ott.top10",
- "version": "1.0.498765",
+ "version": "1.0.498773",
  "name": "OTT Top 10",
  "description": "Cinema, new releases and Top 10 per OTT platform.",
  "resources": [
-  "catalog"
+  "catalog",
+  {
+   "name": "meta",
+   "types": [
+    "movie",
+    "series"
+   ],
+   "idPrefixes": [
+    "tmdb:"
+   ]
+  }
  ],
  "types": [
   "movie",
@@ -14,7 +24,7 @@
   {
    "type": "movie",
    "id": "in-cinema-now",
-   "name": "Now Showing in Cinema - November"
+   "name": "Now Showing in Cinema"
   },
   {
    "type": "movie",
@@ -34,12 +44,12 @@
   {
    "type": "movie",
    "id": "in-netflix-top-movie",
-   "name": "Netflix Top 10 - Movies"
+   "name": "Netflix Top 10"
   },
   {
    "type": "series",
    "id": "in-netflix-top-series",
-   "name": "Netflix Top 10 - Series"
+   "name": "Netflix Top 10"
   },
   {
    "type": "movie",
@@ -54,12 +64,12 @@
   {
    "type": "movie",
    "id": "in-prime-video-top-movie",
-   "name": "Prime Video Top 10 - Movies"
+   "name": "Prime Video Top 10"
   },
   {
    "type": "series",
    "id": "in-prime-video-top-series",
-   "name": "Prime Video Top 10 - Series"
+   "name": "Prime Video Top 10"
   },
   {
    "type": "movie",
@@ -73,13 +83,13 @@
   },
   {
    "type": "movie",
-   "id": "in-jiohotstar-top-movie",
-   "name": "JioHotstar Top 10 - Movies"
+   "id": "in-crunchyroll-top-movie",
+   "name": "Crunchyroll Top 10"
   },
   {
    "type": "series",
-   "id": "in-jiohotstar-top-series",
-   "name": "JioHotstar Top 10 - Series"
+   "id": "in-crunchyroll-top-series",
+   "name": "Crunchyroll Top 10"
   },
   {
    "type": "series",
@@ -89,12 +99,12 @@
   {
    "type": "movie",
    "id": "in-mx-player-top-movie",
-   "name": "MX Player Top 10 - Movies"
+   "name": "MX Player Top 10"
   },
   {
    "type": "series",
    "id": "in-mx-player-top-series",
-   "name": "MX Player Top 10 - Series"
+   "name": "MX Player Top 10"
   },
   {
    "type": "movie",
@@ -108,16 +118,6 @@
   },
   {
    "type": "movie",
-   "id": "in-sonyliv-top-movie",
-   "name": "SonyLIV Top 10 - Movies"
-  },
-  {
-   "type": "series",
-   "id": "in-sonyliv-top-series",
-   "name": "SonyLIV Top 10 - Series"
-  },
-  {
-   "type": "movie",
    "id": "in-zee5-new-movie",
    "name": "Zee5 New Release"
   },
@@ -127,29 +127,9 @@
    "name": "Zee5 New Release"
   },
   {
-   "type": "movie",
-   "id": "in-zee5-top-movie",
-   "name": "Zee5 Top 10 - Movies"
-  },
-  {
-   "type": "series",
-   "id": "in-zee5-top-series",
-   "name": "Zee5 Top 10 - Series"
-  },
-  {
    "type": "series",
    "id": "in-hoichoi-new-series",
    "name": "Hoichoi New Release"
-  },
-  {
-   "type": "movie",
-   "id": "in-hoichoi-top-movie",
-   "name": "Hoichoi Top 10 - Movies"
-  },
-  {
-   "type": "series",
-   "id": "in-hoichoi-top-series",
-   "name": "Hoichoi Top 10 - Series"
   }
  ],
  "behaviorHints": {

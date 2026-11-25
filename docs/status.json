@@ -1,10 +1,10 @@
 {
- "updated": "2026-11-25 03:07 IST",
+ "updated": "2026-11-25 10:42 IST",
  "catalogs": {
   "in-cinema-now": {
-   "name": "Now Showing in Cinema - November",
+   "name": "Now Showing in Cinema",
    "source": "tmdb",
-   "items": 57
+   "items": 55
   },
   "in-cinema-upcoming": {
    "name": "Upcoming in Cinema",
@@ -14,147 +14,115 @@
   "in-netflix-new-movie": {
    "name": "Netflix New Release",
    "source": "justwatch+tmdb",
-   "items": 40
+   "items": 60
   },
   "in-netflix-new-series": {
    "name": "Netflix New Release",
    "source": "justwatch+tmdb",
-   "items": 40
+   "items": 60
   },
   "in-netflix-top-movie": {
-   "name": "Netflix Top 10 - Movies",
+   "name": "Netflix Top 10",
    "source": "tudum",
    "items": 10
   },
   "in-netflix-top-series": {
-   "name": "Netflix Top 10 - Series",
+   "name": "Netflix Top 10",
    "source": "tudum",
    "items": 5
   },
   "in-prime-video-new-movie": {
    "name": "Prime Video New Release",
    "source": "justwatch+tmdb",
-   "items": 24
+   "items": 44
   },
   "in-prime-video-new-series": {
    "name": "Prime Video New Release",
    "source": "justwatch+tmdb",
-   "items": 23
+   "items": 47
   },
   "in-prime-video-top-movie": {
-   "name": "Prime Video Top 10 - Movies",
-   "source": "justwatch",
+   "name": "Prime Video Top 10",
+   "source": "justwatch-popular",
    "items": 10
   },
   "in-prime-video-top-series": {
-   "name": "Prime Video Top 10 - Series",
-   "source": "justwatch",
+   "name": "Prime Video Top 10",
+   "source": "justwatch-popular",
    "items": 10
   },
   "in-jiohotstar-new-movie": {
    "name": "JioHotstar New Release",
    "source": "justwatch+tmdb",
-   "items": 17
+   "items": 30
   },
   "in-jiohotstar-new-series": {
    "name": "JioHotstar New Release",
    "source": "justwatch+tmdb",
-   "items": 28
+   "items": 60
   },
-  "in-jiohotstar-top-movie": {
-   "name": "JioHotstar Top 10 - Movies",
-   "source": "justwatch",
-   "items": 9
+  "in-crunchyroll-top-movie": {
+   "name": "Crunchyroll Top 10",
+   "source": "justwatch-popular",
+   "items": 10
   },
-  "in-jiohotstar-top-series": {
-   "name": "JioHotstar Top 10 - Series",
-   "source": "justwatch",
+  "in-crunchyroll-top-series": {
+   "name": "Crunchyroll Top 10",
+   "source": "justwatch-popular",
    "items": 10
   },
   "in-mx-player-new-series": {
    "name": "MX Player New Release",
-   "source": "tmdb",
-   "items": 1
+   "source": "justwatch+tmdb",
+   "items": 3
   },
   "in-mx-player-top-movie": {
-   "name": "MX Player Top 10 - Movies",
-   "source": "justwatch",
+   "name": "MX Player Top 10",
+   "source": "justwatch-popular",
    "items": 10
   },
   "in-mx-player-top-series": {
-   "name": "MX Player Top 10 - Series",
-   "source": "justwatch",
+   "name": "MX Player Top 10",
+   "source": "justwatch-popular",
    "items": 10
   },
   "in-sonyliv-new-movie": {
    "name": "SonyLIV New Release",
    "source": "justwatch+tmdb",
-   "items": 2
+   "items": 5
   },
   "in-sonyliv-new-series": {
    "name": "SonyLIV New Release",
    "source": "justwatch+tmdb",
-   "items": 6
-  },
-  "in-sonyliv-top-movie": {
-   "name": "SonyLIV Top 10 - Movies",
-   "source": "justwatch",
-   "items": 10
-  },
-  "in-sonyliv-top-series": {
-   "name": "SonyLIV Top 10 - Series",
-   "source": "justwatch",
-   "items": 10
+   "items": 9
   },
   "in-zee5-new-movie": {
    "name": "Zee5 New Release",
    "source": "justwatch+tmdb",
-   "items": 10
+   "items": 18
   },
   "in-zee5-new-series": {
    "name": "Zee5 New Release",
    "source": "justwatch+tmdb",
-   "items": 5
-  },
-  "in-zee5-top-movie": {
-   "name": "Zee5 Top 10 - Movies",
-   "source": "justwatch",
-   "items": 10
-  },
-  "in-zee5-top-series": {
-   "name": "Zee5 Top 10 - Series",
-   "source": "justwatch",
-   "items": 9
+   "items": 8
   },
   "in-hoichoi-new-series": {
    "name": "Hoichoi New Release",
    "source": "justwatch+tmdb",
-   "items": 1
-  },
-  "in-hoichoi-top-movie": {
-   "name": "Hoichoi Top 10 - Movies",
-   "source": "justwatch",
-   "items": 10
-  },
-  "in-hoichoi-top-series": {
-   "name": "Hoichoi Top 10 - Series",
-   "source": "justwatch",
-   "items": 9
+   "items": 2
   }
  },
  "notes": [
   "BookMyShow failed: BookMyShow HTTP 403",
   "BookMyShow failed: BookMyShow HTTP 403",
-  "item failed in-jiohotstar-top-movie 1786842 404 Client Error: Not Found for url: https://api.themoviedb.org/3/movie/1786842?append_to_response=external_ids%2Crelease_dates&language=en-US&api_key=3b419ee12410b5f6e71cc6e2e8e2ddc4",
+  "TMDB new page failed tv 5 503 Server Error: Service Unavailable for url: https://api.themoviedb.org/3/discover/tv?watch_region=IN&with_watch_providers=8&with_watch_monetization_types=flatrate%7Cfree%7Cads&sort_by=popularity.desc&language=en",
   "no data for MX Player new movie",
-  "item failed in-zee5-top-series 340620 404 Client Error: Not Found for url: https://api.themoviedb.org/3/tv/340620?append_to_response=external_ids%2Ccontent_ratings&language=en-US&api_key=3b419ee12410b5f6e71cc6e2e8e2ddc4",
   "TMDB provider not found for Apple TV+",
   "JustWatch package not found for Apple TV+",
   "no data for Apple TV+ new movie",
   "no data for Apple TV+ new series",
   "no data for Apple TV+ top movie",
   "no data for Apple TV+ top series",
-  "no data for Hoichoi new movie",
-  "item failed in-hoichoi-top-series 111744 404 Client Error: Not Found for url: https://api.themoviedb.org/3/tv/111744?append_to_response=external_ids%2Ccontent_ratings&language=en-US&api_key=3b419ee12410b5f6e71cc6e2e8e2ddc4"
+  "no data for Hoichoi new movie"
  ]
 }
