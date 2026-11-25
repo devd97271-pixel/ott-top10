@@ -498,7 +498,7 @@ def cinema_ids(now):
                     tid = resolve("movie", t, y)
                 except Exception:
                     tid = None
-                    if tid:
+                if tid:
                     rec = details("movie", tid)
                     try:
                         d = dt.date.fromisoformat(rec["date"])
@@ -1098,7 +1098,7 @@ def main():
 
     # ---- cinema rows (very top)
     for now in (True, False):
-        try:
+                try:
             ids, src = cinema_ids(now)
             lo, hi = cinema_window(now)
             if now:
@@ -1195,4 +1195,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-            
+        
