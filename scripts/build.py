@@ -2,7 +2,7 @@
 """Builds static Stremio/Nuvio catalogs into ./docs for GitHub Pages.
 
 Rows: cinema (now showing / upcoming) + per platform: new releases and top 10 (per-platform on/off in config).
-Top 10 sources: Netflix Tudum -> FlixPatrol -> JustWatch -> (Gemini) -> TMDB.
+Top 10 sources: per platform "top_source" in config (tudum / flixpatrol / justwatch); the others only fill gaps.
 New releases: JustWatch -> TMDB. Cinema: BookMyShow -> TMDB.
 """
 import colorsys
@@ -48,6 +48,8 @@ META_ALL = bool(CFG.get("meta_for_all", True))
 ID_VER = str(CFG.get("catalog_version", "2"))
 IMG_LANGS = "en,null,hi,bn,ta,te,ml,kn,mr,pa,gu,ur,or,as,ko,ja,zh,th,id,es,fr,de,it,pt,ru,tr,ar"
 CINEMA_LIMIT = int(CFG.get("cinema_limit", 60))
+TOP_N = 10      # how many cards each Top 10 row must show
+TOP_POOL = 25   # candidate titles collected so a failed title can be replaced by the next one
 
 
 def cfg_date(key, default):
@@ -95,9 +97,24 @@ def tmdb(path, **params):
         headers["Authorization"] = f"Bearer {TMDB_KEY}"
     else:
         params["api_key"] = TMDB_KEY
-    r = S.get("https://api.themoviedb.org/3" + path, params=params, headers=headers, timeout=30)
-    r.raise_for_status()
-    return r.json()
+    last = None
+    for attempt in range(4):
+        try:
+            r = S.get("https://api.themoviedb.org/3" + path, params=params, headers=headers, timeout=30)
+            if r.status_code in (429, 500, 502, 503, 504):
+                last = requests.HTTPError(f"TMDB HTTP {r.status_code}")
+                try:
+                    wait = float(r.headers.get("Retry-After", 0))
+                except ValueError:
+                    wait = 0
+                time.sleep(min(max(wait, 1.5 * (attempt + 1)), 10))
+                continue
+            r.raise_for_status()
+            return r.json()
+        except (requests.ConnectionError, requests.Timeout) as e:
+            last = e
+            time.sleep(1.5 * (attempt + 1))
+    raise last
 
 
 def norm_cert(c):
@@ -224,8 +241,15 @@ def details(kind, tid):
 
 
 def resolve(kind, title, year=None):
+    nt = norm(title)
+    if not nt:
+        return None
+    ck = f"r1:{kind}:{nt}:{year or ''}"
+    hit = CACHE.get(ck)
+    if hit and hit.get("id") and time.time() - hit["t"] < 7 * 86400:
+        return hit["id"]
     ep = "/search/movie" if kind == "movie" else "/search/tv"
-    p = {"query": title, "include_adult": "false"}
+    p = {"query": title, "include_adult": "false", "language": "en-US"}
     if year:
         p["year" if kind == "movie" else "first_air_date_year"] = year
     res = tmdb(ep, **p).get("results", [])
@@ -233,7 +257,14 @@ def resolve(kind, title, year=None):
         p.pop("year", None)
         p.pop("first_air_date_year", None)
         res = tmdb(ep, **p).get("results", [])
-    return res[0]["id"] if res else None
+    if not res:
+        return None
+    exact = [r for r in res[:8]
+             if nt in (norm(r.get("title") or r.get("name")),
+                       norm(r.get("original_title") or r.get("original_name")))]
+    pick = max(exact, key=lambda r: r.get("popularity") or 0) if exact else res[0]
+    CACHE[ck] = {"t": time.time(), "id": pick["id"]}
+    return pick["id"]
 
 
 def resolve_many(kind, items, limit=10):
@@ -289,7 +320,7 @@ def tmdb_provider_top(kind, provider_ids):
     ep = "/discover/movie" if kind == "movie" else "/discover/tv"
     res = tmdb(ep, watch_region=COUNTRY, with_watch_providers="|".join(provider_ids),
                with_watch_monetization_types="flatrate|free|ads", sort_by="popularity.desc").get("results", [])
-    return [r["id"] for r in res[:10]]
+    return [r["id"] for r in res[:TOP_POOL]]
 
 
 def tmdb_provider_new(kind, provider_ids, start):
@@ -324,14 +355,19 @@ def tmdb_provider_new(kind, provider_ids, start):
                     ids.append(r["id"])
             if len(res) < 20:
                 break
-    return ids
-
-
-# ---------------------------------------------------------------- Netflix Tudum
+    return ids# ---------------------------------------------------------------- Netflix Tudum
 def load_tudum():
-    r = S.get(TUDUM_TSV, timeout=90)
-    r.raise_for_status()
-    return list(csv.DictReader(io.StringIO(r.text), delimiter="\t"))
+    last = None
+    for attempt in range(3):
+        try:
+            r = S.get(TUDUM_TSV, timeout=120)
+            r.raise_for_status()
+            r.encoding = "utf-8"
+            return list(csv.DictReader(io.StringIO(r.text), delimiter="\t"))
+        except Exception as e:
+            last = e
+            time.sleep(3 * (attempt + 1))
+    raise last
 
 
 def tudum_titles(rows, cc, kind):
@@ -346,7 +382,8 @@ def tudum_titles(rows, cc, kind):
     for r in sel:
         t = r["show_title"].split(" // ")[0].strip()
         t = re.sub(r":\s*(season|limited series|part|volume|chapter|series)\b.*$", "", t, flags=re.I).strip()
-        out.append(t)
+        if t and t not in out:
+            out.append(t)
     return out
 
 
@@ -441,7 +478,10 @@ def jw_popular(packages, kind, first=100, year_min=None):
         ext = c.get("externalIds") or {}
         out.append({"title": c.get("title"), "year": c.get("originalReleaseYear"),
                     "date": c.get("originalReleaseDate"), "tmdb": ext.get("tmdbId")})
-    return out# ---------------------------------------------------------------- Gemini (optional last resort)
+    return out
+
+
+# ---------------------------------------------------------------- Gemini (optional last resort)
 def gemini_top(platform):
     prompt = (
         f"Using Google Search, find the current Top 10 most-watched movies and Top 10 TV series on "
@@ -567,10 +607,7 @@ def cinema_ids(now):
         if lo <= d <= hi:
             keep.append((d, tid))
     keep.sort(key=lambda x: x[0], reverse=now)  # now showing: newest first; upcoming: soonest first
-    return [t for _, t in keep][:CINEMA_LIMIT], "+".join(src) or "none"
-
-
-# ---------------------------------------------------------------- Poster drawing
+    return [t for _, t in keep][:CINEMA_LIMIT], "+".join(src) or "none"# ---------------------------------------------------------------- Poster drawing
 def font(size):
     for p in ("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
               "/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf"):
@@ -908,7 +945,7 @@ def build_catalog(catid, name, kind, ids, mode, prov, src, tag=None):
     metas = []
     rank = 0
     for tid in ids:
-        if mode == "top10" and rank >= 10:
+        if mode == "top10" and rank >= TOP_N:
             break
         try:
             rec = details(tkind, tid)
@@ -944,6 +981,8 @@ def build_catalog(catid, name, kind, ids, mode, prov, src, tag=None):
             })
         except Exception as e:
             note("item failed", catid, tid, e)
+    if mode == "top10" and len(metas) < TOP_N:
+        note(f"{name}: only {len(metas)}/{TOP_N} cards built (candidates: {len(ids)})")
     if len(metas) < (3 if mode == "top10" else 1):
         STATUS[catid] = {"name": name, "source": src, "items": len(metas), "result": "skipped (too few items)"}
         note("skipped", name, "- only", len(metas), "items")
@@ -1038,44 +1077,74 @@ def slugify(s):
     return re.sub(r"[^a-z0-9]+", "-", s.lower().replace("+", "")).strip("-")
 
 
-def top_ids(plat, kind, tudum, flix, jw_short):
-    """Returns (ids, source). Netflix: Tudum then FlixPatrol fills the gaps up to 10.
-    Others: FlixPatrol, then (only if < 3 found) JustWatch popularity / Gemini / TMDB popularity."""
+def top_source(plat):
+    """Which source is the main one for this platform's Top 10: tudum / flixpatrol / justwatch."""
+    mode = str(plat.get("top_source") or ("tudum" if plat["name"] == "Netflix" else "flixpatrol")).lower()
+    return mode if mode in ("tudum", "flixpatrol", "justwatch") else "flixpatrol"
+
+
+def top_ids(plat, kind, tudum, flix, jw_short, tm_ids):
+    """Returns (candidate ids, source). The platform's own source (config 'top_source') goes first;
+    the rest only fill the gaps if it gives fewer than needed.
+    build_catalog shows the first TOP_N candidates that work, so a title that cannot be found /
+    has no image / fails to render is replaced by the next one (always 10 cards)."""
     name = plat["name"]
+    tk = "movie" if kind == "movie" else "tv"
+    mode = top_source(plat)
     ids, src = [], []
+    need = TOP_N + 3  # keep filling until we have a small safety buffer
 
     def add(new, label):
         n0 = len(ids)
         for t in new:
-            if t not in ids and len(ids) < 10:
+            if t not in ids and len(ids) < TOP_POOL:
                 ids.append(t)
         if len(ids) > n0:
             src.append(label)
 
-    if name == "Netflix" and tudum:
-        try:
-            add(resolve_many(kind, tudum_titles(tudum, COUNTRY, kind), limit=20), "tudum")
-        except Exception as e:
-            note("Tudum failed", e)
-    if len(ids) < 10 and flix:
-        try:
-            add(resolve_many(kind, flix.get(kind, []), limit=20), "flixpatrol")
-        except Exception as e:
-            note("FlixPatrol resolve failed", name, e)
-    if len(ids) >= 3:
-        return ids, "+".join(src)
-    if jw_short:
-        try:
-            add(resolve_many(kind, jw_popular(jw_short, kind, first=30)), "justwatch-popular")
-        except Exception as e:
-            note("JustWatch top failed", name, e)
-    if len(ids) < 3 and CFG.get("use_gemini") and GEMINI_KEY:
-        try:
-            m, s = gemini_top(name)
-            add(resolve_many(kind, m if kind == "movie" else s), "gemini")
+    def from_tudum():
+        if not tudum:
+            note(name, ": Tudum data not loaded")
+            return
+        titles = tudum_titles(tudum, COUNTRY, kind)
+        got = resolve_many(kind, titles, limit=TOP_POOL)
+        log(f"Tudum {kind}: {len(titles)} titles -> {len(got)} resolved")
+        if len(got) < len(titles):
+            note(f"Tudum {kind}: only {len(got)}/{len(titles)} titles resolved on TMDB")
+        add(got, "tudum")
+
+    def from_flix():
+        if flix:
+            add(resolve_many(kind, flix.get(kind, []), limit=TOP_POOL), "flixpatrol")
+        else:
+            note(name, ": FlixPatrol data not available")
+
+    def from_jw():
+        if jw_short:
+            add(resolve_many(kind, jw_popular(jw_short, kind, first=40), limit=TOP_POOL), "justwatch-top")
+        else:
+            note(name, ": JustWatch package not found")
+
+    def from_gemini():
+        if len(ids) < 3 and CFG.get("use_gemini") and GEMINI_KEY:
+            m, s_ = gemini_top(name)
+            add(resolve_many(kind, m if kind == "movie" else s_, limit=TOP_POOL), "gemini")
             time.sleep(4)
+
+    def from_tmdb():
+        if tm_ids:
+            add(tmdb_provider_top(tk, tm_ids), "tmdb-popular")
+
+    order = {"tudum": (from_tudum, from_flix, from_jw, from_gemini, from_tmdb),
+             "flixpatrol": (from_flix, from_jw, from_gemini, from_tmdb),
+             "justwatch": (from_jw, from_gemini, from_tmdb)}[mode]
+    for i, step in enumerate(order):
+        if i > 0 and len(ids) >= need:
+            break
+        try:
+            step()
         except Exception as e:
-            note("Gemini failed", name, e)
+            note(name, kind, step.__name__, "failed:", e)
     return ids, "+".join(src) or "none"
 
 
@@ -1183,7 +1252,7 @@ def main():
             note("JustWatch package not found for", name)
         prov = {"name": name, "slug": slug, "logo": logo}
         flix = None
-        if plat.get("flixpatrol") and plat.get("top10", True):
+        if plat.get("flixpatrol") and plat.get("top10", True) and top_source(plat) != "justwatch":
             flix = flix_fetch(plat["flixpatrol"])
             time.sleep(1)
 
@@ -1201,9 +1270,7 @@ def main():
                         label = "New Release"
                         mode = "new"
                     else:
-                        ids, src = top_ids(plat, kind, tudum, flix, jw_short)
-                        if len(ids) < 3 and tm_ids:
-                            ids, src = tmdb_provider_top(tk, tm_ids), "tmdb-popular"
+                        ids, src = top_ids(plat, kind, tudum, flix, jw_short, tm_ids)
                         label = "Top 10"
                         mode = "top10"
                     if not ids:
