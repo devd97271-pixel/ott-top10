@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-26 11:12 IST",
+ "updated": "2026-11-27 02:07 IST",
  "catalogs": {
   "in2-cinema-now": {
    "name": "Now Showing in Cinema",
@@ -19,7 +19,7 @@
   "in2-netflix-new-series": {
    "name": "Netflix New Release",
    "source": "justwatch+tmdb",
-   "items": 98
+   "items": 103
   },
   "in2-netflix-top-movie": {
    "name": "Netflix Top 10",
@@ -34,7 +34,7 @@
   "in2-prime-video-new-movie": {
    "name": "Prime Video New Release",
    "source": "justwatch+tmdb",
-   "items": 47
+   "items": 49
   },
   "in2-prime-video-new-series": {
    "name": "Prime Video New Release",
@@ -54,7 +54,7 @@
   "in2-jiohotstar-new-movie": {
    "name": "JioHotstar New Release",
    "source": "justwatch+tmdb",
-   "items": 30
+   "items": 31
   },
   "in2-jiohotstar-new-series": {
    "name": "JioHotstar New Release",
