@@ -12,14 +12,14 @@
   "use_gemini": false,
   "gemini_model": "gemini-2.5-flash",
   "platforms": [
-    { "name": "Netflix", "match": ["netflix"], "flixpatrol": ["netflix"] },
-    { "name": "Prime Video", "match": ["primevideo"], "flixpatrol": ["amazon-prime"] },
-    { "name": "JioHotstar", "match": ["hotstar"], "flixpatrol": ["jiohotstar", "hotstar"] },
-    { "name": "Crunchyroll", "match": ["crunchyroll"], "flixpatrol": ["crunchyroll"] },
+    { "name": "Netflix", "match": ["netflix"], "flixpatrol": ["netflix"], "top_source": "tudum" },
+    { "name": "Prime Video", "match": ["primevideo"], "flixpatrol": ["amazon-prime"], "top_source": "flixpatrol" },
+    { "name": "JioHotstar", "match": ["hotstar"], "flixpatrol": ["jiohotstar", "hotstar"], "top_source": "flixpatrol" },
+    { "name": "Crunchyroll", "match": ["crunchyroll"], "top_source": "justwatch" },
     { "name": "MX Player", "match": ["mxplayer"], "flixpatrol": ["mx-player"] },
     { "name": "SonyLIV", "match": ["sonyliv"], "flixpatrol": ["sony-liv", "sonyliv"] },
     { "name": "Zee5", "match": ["zee5"], "flixpatrol": ["zee5"] },
-    { "name": "Apple TV+", "match": ["appletvplus"], "flixpatrol": ["apple-tv"] },
-    { "name": "Hoichoi", "match": ["hoichoi"], "flixpatrol": ["hoichoi"] }
+    { "name": "Apple TV+", "match": ["appletvplus"], "flixpatrol": ["apple-tv"], "top_source": "flixpatrol" },
+    { "name": "Hoichoi", "match": ["hoichoi"], "top_source": "justwatch" }
   ]
 }
