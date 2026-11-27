@@ -797,7 +797,7 @@ def font(size):
             return ImageFont.truetype(p, size)
         except OSError:
             pass
-return ImageFont.load_default()
+    return ImageFont.load_default()
 
 
 FONT_DIR = ROOT / "fonts"
@@ -1566,3 +1566,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
