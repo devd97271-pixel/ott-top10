@@ -489,6 +489,7 @@ def jw_popular(packages, kind, first=100, year_min=None):
 ARRIVAL_DAYS = int(CFG.get("arrival_days", 30))
 ARR_DATES = {}                 # (tmdb kind, tmdb id) -> arrival date (YYYY-MM-DD)
 ARR_MEMO = {}
+ARR_TYPES = {}
 ARR_STATE = {"broken": False, "variant": None}
 
 _NEW_FIELDS = """objectType
@@ -520,8 +521,8 @@ def jw_diag():
         note("JW introspection failed:", e)
 
 
-def _jw_day(pkgs, day, variant):
-    flt = {"packages": pkgs, "objectTypes": ["MOVIE", "SHOW"]}
+def _jw_day(pkgs, day, variant, types=("MOVIE", "SHOW")):
+    flt = {"packages": pkgs, "objectTypes": list(types)}
     out, after = [], None
     for _ in range(5):
         v = {"country": COUNTRY, "language": "en", "date": str(day), "first": 100, "filter": flt}
@@ -535,8 +536,9 @@ def _jw_day(pkgs, day, variant):
             ext = c.get("externalIds") or {}
             if not c.get("title"):
                 continue
+            ARR_TYPES[n.get("objectType")] = ARR_TYPES.get(n.get("objectType"), 0) + 1
             out.append({"kind": "movie" if n.get("objectType") == "MOVIE" else "series",
-                        "title": c.get("title"), "year": c.get("originalReleaseYear"),
+                        "otype": n.get("objectType"), "title": c.get("title"), "year": c.get("originalReleaseYear"),
                         "tmdb": ext.get("tmdbId"), "date": str(day)})
         pi = d.get("pageInfo") if isinstance(d, dict) else None
         if not (variant["paged"] and pi and pi.get("hasNextPage") and pi.get("endCursor")):
@@ -590,6 +592,29 @@ def jw_arrivals(pkgs):
     with ThreadPoolExecutor(max_workers=4) as ex:
         for items in ex.map(one, todo):
             res += items
+    if res and not any(i["kind"] == "series" for i in res):
+        # the combined query returned only movies: ask for shows separately
+        note("JW arrivals: no series in combined feed, retrying with SHOW only. types:", ARR_TYPES)
+
+        def one_s(day):
+            ck = f"jwn1s:{key}:{day}"
+            hit = CACHE.get(ck)
+            if hit and day < TODAY - dt.timedelta(days=3) and time.time() - hit["t"] < 40 * 86400:
+                return hit["items"]
+            try:
+                items = _jw_day(pkgs, day, var, types=("SHOW",))
+                CACHE[ck] = {"t": time.time(), "items": items}
+                return items
+            except Exception as e:
+                note("JW arrivals SHOW day failed", str(day), str(e)[:120])
+                return []
+
+        with ThreadPoolExecutor(max_workers=4) as ex:
+            for items in ex.map(one_s, days):
+                res += items
+        if not ARR_STATE.get("typed"):
+            ARR_STATE["typed"] = True
+            note("JW arrivals types after retry:", ARR_TYPES)
     ARR_MEMO[key] = res
     return res
 
