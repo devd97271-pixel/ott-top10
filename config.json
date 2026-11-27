@@ -24,8 +24,7 @@
    "flixpatrol": [
     "netflix"
    ],
-   "top_source": "tudum",
-   "strict_top": true
+   "top_source": "tudum"
   },
   {
    "name": "Prime Video",
@@ -109,7 +108,8 @@
     "hoichoi"
    ],
    "top_source": "justwatch",
-   "new_days": 90
+   "new_days": 90,
+   "strict_top": true
   }
  ],
  "arrival_days": 30,
