@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-27 02:07 IST",
+ "updated": "2026-11-27 10:26 IST",
  "catalogs": {
   "in2-cinema-now": {
    "name": "Now Showing in Cinema",
@@ -13,8 +13,8 @@
   },
   "in2-netflix-new-movie": {
    "name": "Netflix New Release",
-   "source": "justwatch+tmdb",
-   "items": 78
+   "source": "justwatch-new+justwatch+tmdb",
+   "items": 149
   },
   "in2-netflix-new-series": {
    "name": "Netflix New Release",
@@ -33,13 +33,13 @@
   },
   "in2-prime-video-new-movie": {
    "name": "Prime Video New Release",
-   "source": "justwatch+tmdb",
-   "items": 49
+   "source": "justwatch-new+justwatch+tmdb",
+   "items": 149
   },
   "in2-prime-video-new-series": {
    "name": "Prime Video New Release",
    "source": "justwatch+tmdb",
-   "items": 48
+   "items": 49
   },
   "in2-prime-video-top-movie": {
    "name": "Prime Video Top 10",
@@ -53,8 +53,8 @@
   },
   "in2-jiohotstar-new-movie": {
    "name": "JioHotstar New Release",
-   "source": "justwatch+tmdb",
-   "items": 31
+   "source": "justwatch-new+justwatch+tmdb",
+   "items": 130
   },
   "in2-jiohotstar-new-series": {
    "name": "JioHotstar New Release",
@@ -71,6 +71,11 @@
    "source": "justwatch-top",
    "items": 10
   },
+  "in2-crunchyroll-new-movie": {
+   "name": "Crunchyroll New Release",
+   "source": "justwatch-new+tmdb",
+   "items": 5
+  },
   "in2-crunchyroll-new-series": {
    "name": "Crunchyroll New Release",
    "source": "justwatch+tmdb",
@@ -85,6 +90,11 @@
    "name": "Crunchyroll Top 10",
    "source": "justwatch-top",
    "items": 10
+  },
+  "in2-mx-player-new-movie": {
+   "name": "MX Player New Release",
+   "source": "justwatch-new+tmdb",
+   "items": 150
   },
   "in2-mx-player-new-series": {
    "name": "MX Player New Release",
@@ -103,8 +113,8 @@
   },
   "in2-sonyliv-new-movie": {
    "name": "SonyLIV New Release",
-   "source": "justwatch+tmdb",
-   "items": 5
+   "source": "justwatch-new+justwatch+tmdb",
+   "items": 149
   },
   "in2-sonyliv-new-series": {
    "name": "SonyLIV New Release",
@@ -123,8 +133,8 @@
   },
   "in2-zee5-new-movie": {
    "name": "Zee5 New Release",
-   "source": "justwatch+tmdb",
-   "items": 18
+   "source": "justwatch-new+justwatch+tmdb",
+   "items": 150
   },
   "in2-zee5-new-series": {
    "name": "Zee5 New Release",
@@ -138,6 +148,26 @@
   },
   "in2-zee5-top-series": {
    "name": "Zee5 Top 10",
+   "source": "justwatch-top",
+   "items": 10
+  },
+  "in2-apple-tv-new-movie": {
+   "name": "Apple TV+ New Release",
+   "source": "justwatch-new+justwatch+tmdb",
+   "items": 6
+  },
+  "in2-apple-tv-new-series": {
+   "name": "Apple TV+ New Release",
+   "source": "justwatch+tmdb",
+   "items": 6
+  },
+  "in2-apple-tv-top-movie": {
+   "name": "Apple TV+ Top 10",
+   "source": "justwatch-top",
+   "items": 10
+  },
+  "in2-apple-tv-top-series": {
+   "name": "Apple TV+ Top 10",
    "source": "justwatch-top",
    "items": 10
   },
@@ -160,33 +190,34 @@
  "notes": [
   "BookMyShow failed: BookMyShow HTTP 403",
   "BookMyShow failed: BookMyShow HTTP 403",
+  "FlixPatrol netflix HTTP 403",
+  "item failed in2-netflix-new-movie 1843934 404 Client Error: Not Found for url: https://api.themoviedb.org/3/movie/1843934?append_to_response=external_ids%2Crelease_dates%2Cimages&language=en-US&include_image_language=en%2Cnull%2Chi%2Cbn%2Ct",
   "Netflix : FlixPatrol data not available",
   "Tudum series: only 6/9 titles resolved on TMDB",
   "Netflix : FlixPatrol data not available",
+  "FlixPatrol amazon-prime HTTP 403",
   "Prime Video : FlixPatrol data not available",
   "Prime Video : FlixPatrol data not available",
+  "FlixPatrol jiohotstar HTTP 403",
+  "FlixPatrol hotstar HTTP 403",
+  "item failed in2-jiohotstar-new-movie 1629082 404 Client Error: Not Found for url: https://api.themoviedb.org/3/movie/1629082?append_to_response=external_ids%2Crelease_dates%2Cimages&language=en-US&include_image_language=en%2Cnull%2Chi%2Cbn%",
+  "item failed in2-jiohotstar-new-movie 1786842 404 Client Error: Not Found for url: https://api.themoviedb.org/3/movie/1786842?append_to_response=external_ids%2Crelease_dates%2Cimages&language=en-US&include_image_language=en%2Cnull%2Chi%2Cbn%",
   "JioHotstar : FlixPatrol data not available",
   "item failed in2-jiohotstar-top-movie 1786842 404 Client Error: Not Found for url: https://api.themoviedb.org/3/movie/1786842?append_to_response=external_ids%2Crelease_dates%2Cimages&language=en-US&include_image_language=en%2Cnull%2Chi%2Cbn%",
   "JioHotstar : FlixPatrol data not available",
-  "no data for Crunchyroll new movie",
-  "no data for MX Player new movie",
+  "FlixPatrol mx-player HTTP 403",
   "MX Player : FlixPatrol data not available",
   "MX Player : FlixPatrol data not available",
+  "FlixPatrol sony-liv HTTP 403",
+  "FlixPatrol sonyliv HTTP 403",
   "SonyLIV : FlixPatrol data not available",
   "SonyLIV : FlixPatrol data not available",
+  "FlixPatrol zee5 HTTP 403",
   "Zee5 : FlixPatrol data not available",
   "Zee5 : FlixPatrol data not available",
-  "item failed in2-zee5-top-series 340620 404 Client Error: Not Found for url: https://api.themoviedb.org/3/tv/340620?append_to_response=external_ids%2Ccontent_ratings%2Cimages&language=en-US&include_image_language=en%2Cnull%2Chi%2Cbn%2Cta%2Ct",
-  "TMDB provider not found for Apple TV+",
-  "JustWatch package not found for Apple TV+",
-  "no data for Apple TV+ new movie",
-  "no data for Apple TV+ new series",
+  "FlixPatrol apple-tv HTTP 403",
   "Apple TV+ : FlixPatrol data not available",
-  "Apple TV+ : JustWatch package not found",
-  "no data for Apple TV+ top movie",
   "Apple TV+ : FlixPatrol data not available",
-  "Apple TV+ : JustWatch package not found",
-  "no data for Apple TV+ top series",
   "no data for Hoichoi new movie",
   "item failed in2-hoichoi-top-series 111744 404 Client Error: Not Found for url: https://api.themoviedb.org/3/tv/111744?append_to_response=external_ids%2Ccontent_ratings%2Cimages&language=en-US&include_image_language=en%2Cnull%2Chi%2Cbn%2Cta%"
  ]

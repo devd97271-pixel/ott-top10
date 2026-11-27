@@ -1,6 +1,6 @@
 {
  "id": "community.ott.top10",
- "version": "1.0.498812",
+ "version": "1.0.498821",
  "name": "OTT Top 10",
  "description": "Cinema, new releases and Top 10 per OTT platform.",
  "resources": [
@@ -93,6 +93,11 @@
    "name": "JioHotstar Top 10"
   },
   {
+   "type": "movie",
+   "id": "in2-crunchyroll-new-movie",
+   "name": "Crunchyroll New Release"
+  },
+  {
    "type": "series",
    "id": "in2-crunchyroll-new-series",
    "name": "Crunchyroll New Release"
@@ -106,6 +111,11 @@
    "type": "series",
    "id": "in2-crunchyroll-top-series",
    "name": "Crunchyroll Top 10"
+  },
+  {
+   "type": "movie",
+   "id": "in2-mx-player-new-movie",
+   "name": "MX Player New Release"
   },
   {
    "type": "series",
@@ -161,6 +171,26 @@
    "type": "series",
    "id": "in2-zee5-top-series",
    "name": "Zee5 Top 10"
+  },
+  {
+   "type": "movie",
+   "id": "in2-apple-tv-new-movie",
+   "name": "Apple TV+ New Release"
+  },
+  {
+   "type": "series",
+   "id": "in2-apple-tv-new-series",
+   "name": "Apple TV+ New Release"
+  },
+  {
+   "type": "movie",
+   "id": "in2-apple-tv-top-movie",
+   "name": "Apple TV+ Top 10"
+  },
+  {
+   "type": "series",
+   "id": "in2-apple-tv-top-series",
+   "name": "Apple TV+ Top 10"
   },
   {
    "type": "series",
