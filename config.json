@@ -7,19 +7,98 @@
   "new_pages": 15,
   "cinema_limit": 60,
   "catalog_version": "2",
-  "title_logo_on": ["top10", "new", "cinema"],
+  "title_logo_on": [
+    "top10",
+    "new",
+    "cinema"
+  ],
   "meta_for_all": true,
   "use_gemini": false,
   "gemini_model": "gemini-2.5-flash",
   "platforms": [
-    { "name": "Netflix", "match": ["netflix"], "flixpatrol": ["netflix"], "top_source": "tudum" },
-    { "name": "Prime Video", "match": ["primevideo"], "flixpatrol": ["amazon-prime"], "top_source": "flixpatrol" },
-    { "name": "JioHotstar", "match": ["hotstar"], "flixpatrol": ["jiohotstar", "hotstar"], "top_source": "flixpatrol" },
-    { "name": "Crunchyroll", "match": ["crunchyroll"], "top_source": "justwatch" },
-    { "name": "MX Player", "match": ["mxplayer"], "flixpatrol": ["mx-player"] },
-    { "name": "SonyLIV", "match": ["sonyliv"], "flixpatrol": ["sony-liv", "sonyliv"] },
-    { "name": "Zee5", "match": ["zee5"], "flixpatrol": ["zee5"] },
-    { "name": "Apple TV+", "match": ["appletvplus"], "flixpatrol": ["apple-tv"], "top_source": "flixpatrol" },
-    { "name": "Hoichoi", "match": ["hoichoi"], "top_source": "justwatch" }
-  ]
+    {
+      "name": "Netflix",
+      "match": [
+        "netflix"
+      ],
+      "flixpatrol": [
+        "netflix"
+      ],
+      "top_source": "tudum"
+    },
+    {
+      "name": "Prime Video",
+      "match": [
+        "primevideo"
+      ],
+      "flixpatrol": [
+        "amazon-prime"
+      ],
+      "top_source": "flixpatrol"
+    },
+    {
+      "name": "JioHotstar",
+      "match": [
+        "hotstar"
+      ],
+      "flixpatrol": [
+        "jiohotstar",
+        "hotstar"
+      ],
+      "top_source": "flixpatrol"
+    },
+    {
+      "name": "Crunchyroll",
+      "match": [
+        "crunchyroll"
+      ],
+      "top_source": "justwatch"
+    },
+    {
+      "name": "MX Player",
+      "match": [
+        "mxplayer"
+      ],
+      "flixpatrol": [
+        "mx-player"
+      ]
+    },
+    {
+      "name": "SonyLIV",
+      "match": [
+        "sonyliv"
+      ],
+      "flixpatrol": [
+        "sony-liv",
+        "sonyliv"
+      ]
+    },
+    {
+      "name": "Zee5",
+      "match": [
+        "zee5"
+      ],
+      "flixpatrol": [
+        "zee5"
+      ]
+    },
+    {
+      "name": "Apple TV+",
+      "match": [
+        "appletv"
+      ],
+      "flixpatrol": [
+        "apple-tv"
+      ],
+      "top_source": "flixpatrol"
+    },
+    {
+      "name": "Hoichoi",
+      "match": [
+        "hoichoi"
+      ],
+      "top_source": "justwatch"
+    }
+  ],
+  "arrival_days": 30
 }
