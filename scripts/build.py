@@ -240,11 +240,26 @@ def details(kind, tid):
     return rec
 
 
-def resolve(kind, title, year=None):
+def find_imdb(kind, imdb):
+    ck = f"f1:{kind}:{imdb}"
+    hit = CACHE.get(ck)
+    if hit and time.time() - hit["t"] < 30 * 86400:
+        return hit.get("id")
+    try:
+        r = tmdb(f"/find/{imdb}", external_source="imdb_id")
+    except Exception:
+        return None
+    lst = r.get("movie_results" if kind == "movie" else "tv_results") or []
+    tid = lst[0]["id"] if lst else None
+    CACHE[ck] = {"t": time.time(), "id": tid}
+    return tid
+
+
+def resolve(kind, title, year=None, strict=False):
     nt = norm(title)
     if not nt:
         return None
-    ck = f"r1:{kind}:{nt}:{year or ''}"
+    ck = f"r1:{kind}:{nt}:{year or ''}" + (":s" if strict else "")
     hit = CACHE.get(ck)
     if hit and hit.get("id") and time.time() - hit["t"] < 7 * 86400:
         return hit["id"]
@@ -262,6 +277,8 @@ def resolve(kind, title, year=None):
     exact = [r for r in res[:8]
              if nt in (norm(r.get("title") or r.get("name")),
                        norm(r.get("original_title") or r.get("original_name")))]
+    if strict and not exact:
+        return None
     pick = max(exact, key=lambda r: r.get("popularity") or 0) if exact else res[0]
     CACHE[ck] = {"t": time.time(), "id": pick["id"]}
     return pick["id"]
@@ -277,6 +294,8 @@ def resolve_many(kind, items, limit=10):
                 tid = int(it["tmdb"])
             except (TypeError, ValueError):
                 tid = None
+        if tid is None and isinstance(it, dict) and it.get("imdb"):
+            tid = find_imdb(kind, it["imdb"])
         if tid is None:
             title, year = (it, None) if isinstance(it, str) else (it.get("title"), it.get("year"))
             if not title:
@@ -368,6 +387,29 @@ def load_tudum():
             last = e
             time.sleep(3 * (attempt + 1))
     raise last
+
+
+def tudum_entries(rows, cc, kind):
+    """Netflix Top 10 of the latest week, in rank order; each entry = list of title candidates."""
+    rows = [r for r in rows if (r.get("country_iso2") or "").upper() == cc]
+    if not rows:
+        return []
+    latest = max(r["week"] for r in rows)
+    want = "film" if kind == "movie" else "tv"
+    sel = [r for r in rows if r["week"] == latest and (r.get("category") or "").lower().startswith(want)]
+    sel.sort(key=lambda r: int(r["weekly_rank"]))
+    out = []
+    for r in sel:
+        cands = []
+        raws = r["show_title"].split(" // ") + [r.get("season_title") or ""]
+        for raw in raws:
+            base = re.sub(r":\s*(season|limited series|part|volume|chapter|series)\b.*$", "", raw.strip(), flags=re.I).strip()
+            for c in (base, re.sub(r"\s*\(.*?\)\s*", " ", base).strip(), re.split(r"\s[:\-\u2013]\s", base)[0].strip()):
+                if c and c.lower() != "n/a" and c not in cands:
+                    cands.append(c)
+        if cands and all(cands[0] != o[0] for o in out):
+            out.append(cands)
+    return out
 
 
 def tudum_titles(rows, cc, kind):
@@ -463,7 +505,7 @@ def jw_recent(packages, kind, year_min, pages=6):
             c = (e.get("node") or {}).get("content") or {}
             ext = c.get("externalIds") or {}
             out.append({"title": c.get("title"), "year": c.get("originalReleaseYear"),
-                        "date": c.get("originalReleaseDate"), "tmdb": ext.get("tmdbId")})
+                        "date": c.get("originalReleaseDate"), "tmdb": ext.get("tmdbId"), "imdb": ext.get("imdbId")})
         pi = d.get("pageInfo") or {}
         if not pi.get("hasNextPage") or not pi.get("endCursor"):
             break
@@ -481,7 +523,7 @@ def jw_popular(packages, kind, first=100, year_min=None):
         c = (e.get("node") or {}).get("content") or {}
         ext = c.get("externalIds") or {}
         out.append({"title": c.get("title"), "year": c.get("originalReleaseYear"),
-                    "date": c.get("originalReleaseDate"), "tmdb": ext.get("tmdbId")})
+                    "date": c.get("originalReleaseDate"), "tmdb": ext.get("tmdbId"), "imdb": ext.get("imdbId")})
     return out
 
 
@@ -489,6 +531,7 @@ def jw_popular(packages, kind, first=100, year_min=None):
 ARRIVAL_DAYS = int(CFG.get("arrival_days", 30))
 ARR_DATES = {}                 # (tmdb kind, tmdb id) -> arrival date (YYYY-MM-DD)
 ARR_MEMO = {}
+WIN = {"since": SINCE, "days": ARRIVAL_DAYS}   # per-platform "new" window (config new_days)
 ARR_TYPES = {}
 ARR_STATE = {"broken": False, "variant": None}
 
@@ -539,7 +582,7 @@ def _jw_day(pkgs, day, variant, types=("MOVIE", "SHOW")):
             ARR_TYPES[n.get("objectType")] = ARR_TYPES.get(n.get("objectType"), 0) + 1
             out.append({"kind": "movie" if n.get("objectType") == "MOVIE" else "series",
                         "otype": n.get("objectType"), "title": c.get("title"), "year": c.get("originalReleaseYear"),
-                        "tmdb": ext.get("tmdbId"), "date": str(day)})
+                        "tmdb": ext.get("tmdbId"), "imdb": ext.get("imdbId"), "date": str(day)})
         pi = d.get("pageInfo") if isinstance(d, dict) else None
         if not (variant["paged"] and pi and pi.get("hasNextPage") and pi.get("endCursor")):
             break
@@ -550,8 +593,9 @@ def _jw_day(pkgs, day, variant, types=("MOVIE", "SHOW")):
 def jw_arrivals(pkgs):
     """Titles that were ADDED to these platforms in the last ARRIVAL_DAYS days (what JustWatch 'New' shows)."""
     key = "+".join(sorted(pkgs))
-    if key in ARR_MEMO:
-        return ARR_MEMO[key]
+    mkey = f"{key}:{WIN['days']}"
+    if mkey in ARR_MEMO:
+        return ARR_MEMO[mkey]
     if ARR_STATE["broken"]:
         return []
     if ARR_STATE["variant"] is None:
@@ -570,7 +614,7 @@ def jw_arrivals(pkgs):
             ARR_STATE["broken"] = True
             return []
     var = ARR_STATE["variant"]
-    start = max(SINCE, TODAY - dt.timedelta(days=ARRIVAL_DAYS))
+    start = TODAY - dt.timedelta(days=WIN["days"])
     days = [TODAY - dt.timedelta(days=i) for i in range((TODAY - start).days + 1)]
     res, todo = [], []
     for day in days:
@@ -615,7 +659,7 @@ def jw_arrivals(pkgs):
         if not ARR_STATE.get("typed"):
             ARR_STATE["typed"] = True
             note("JW arrivals types after retry:", ARR_TYPES)
-    ARR_MEMO[key] = res
+    ARR_MEMO[mkey] = res
     return res
 
 
@@ -675,7 +719,7 @@ def bms_titles(now):
 
 def cinema_window(now):
     if now:
-        return SINCE, TODAY
+        return TODAY - dt.timedelta(days=int(CFG.get("cinema_now_days", 30))), TODAY
     return TODAY + dt.timedelta(days=1), UPCOMING_UNTIL
 
 
@@ -753,7 +797,7 @@ def font(size):
             return ImageFont.truetype(p, size)
         except OSError:
             pass
-    return ImageFont.load_default()
+return ImageFont.load_default()
 
 
 FONT_DIR = ROOT / "fonts"
@@ -1080,7 +1124,7 @@ def eff_date(tk, rec):
             d = dt.date.fromisoformat((s or "")[:10])
         except Exception:
             continue
-        if SINCE <= d <= TODAY:
+        if WIN["since"] <= d <= TODAY:
             return d
     return None
 
@@ -1251,11 +1295,31 @@ def top_ids(plat, kind, tudum, flix, jw_short, tm_ids):
         if not tudum:
             note(name, ": Tudum data not loaded")
             return
-        titles = tudum_titles(tudum, COUNTRY, kind)
-        got = resolve_many(kind, titles, limit=TOP_POOL)
-        log(f"Tudum {kind}: {len(titles)} titles -> {len(got)} resolved")
-        if len(got) < len(titles):
-            note(f"Tudum {kind}: only {len(got)}/{len(titles)} titles resolved on TMDB")
+        entries = tudum_entries(tudum, COUNTRY, kind)
+        got, miss = [], []
+        for cands in entries:
+            tid = None
+            for c in cands:                      # exact name match first
+                try:
+                    tid = resolve(kind, c, None, strict=True)
+                except Exception:
+                    tid = None
+                if tid:
+                    break
+            if tid is None:                      # last resort: best search hit of the main title
+                try:
+                    tid = resolve(kind, cands[0], None)
+                except Exception:
+                    tid = None
+                if tid:
+                    note(f"Tudum {kind}: approx match for", cands[0])
+            if tid and tid not in got:
+                got.append(tid)
+            elif not tid:
+                miss.append(cands[0])
+        log(f"Tudum {kind}: {len(entries)} titles -> {len(got)} resolved")
+        if miss:
+            note(f"Tudum {kind}: not found on TMDB:", miss)
         add(got, "tudum")
 
     def from_flix():
@@ -1286,6 +1350,8 @@ def top_ids(plat, kind, tudum, flix, jw_short, tm_ids):
     for i, step in enumerate(order):
         if i > 0 and len(ids) >= need:
             break
+        if i > 0 and plat.get("strict_top") and len(ids) >= 3:
+            break          # e.g. Netflix: show only the official list, no filler titles
         try:
             step()
         except Exception as e:
@@ -1325,11 +1391,11 @@ def new_ids(kind, tk, jw_short, tm_ids):
             note("JustWatch arrivals failed", e)
         items = []
         try:
-            items += jw_recent(jw_short, kind, SINCE.year, pages=min(NEW_PAGES, 8))
+            items += jw_recent(jw_short, kind, WIN["since"].year, pages=min(NEW_PAGES, 8))
         except Exception as e:
             note("JustWatch recent failed", e)
         try:
-            items += jw_popular(jw_short, kind, first=100, year_min=SINCE.year)
+            items += jw_popular(jw_short, kind, first=100, year_min=WIN["since"].year)
         except Exception as e:
             note("JustWatch popular failed", e)
         if items:
@@ -1339,7 +1405,7 @@ def new_ids(kind, tk, jw_short, tm_ids):
             src.append("justwatch")
     if tm_ids:
         try:
-            for tid in tmdb_provider_new(tk, tm_ids, SINCE):
+            for tid in tmdb_provider_new(tk, tm_ids, WIN["since"]):
                 if tid not in ids:
                     ids.append(tid)
             src.append("tmdb")
@@ -1379,6 +1445,11 @@ def main():
         tm_providers = {}
         note("TMDB providers failed:", e)
     jw_packages = load_jw_packages()
+    try:
+        wk = max(r["week"] for r in tudum if (r.get("country_iso2") or "").upper() == COUNTRY)
+        note("Netflix Tudum latest week for", COUNTRY, ":", wk)
+    except Exception:
+        pass
 
     cats = []
 
@@ -1406,6 +1477,22 @@ def main():
         logo = tm_providers[tm_names[0]].get("logo_path") if tm_names else None
         jw_names = match_names(jw_packages.keys(), plat["match"])
         jw_short = [jw_packages[n] for n in jw_names]
+        if plat.get("jw_packages"):
+            ov = [x for x in plat["jw_packages"] if x in jw_packages.values()]
+            if ov:
+                jw_short = ov
+            else:
+                note(name, ": jw_packages override not found:", plat["jw_packages"])
+        if plat.get("tmdb_providers"):
+            tm_ids = [str(x) for x in plat["tmdb_providers"]]
+            for pr in tm_providers.values():
+                if str(pr["provider_id"]) == tm_ids[0]:
+                    logo = pr.get("logo_path") or logo
+        near = [f"{n}={v}" for n, v in jw_packages.items() if plat["match"][0][:6] in norm(n)]
+        note(name, "| JW used:", jw_short, "| TMDB ids:", tm_ids, "| JW names like it:", near[:4])
+        nd = plat.get("new_days")
+        WIN["days"] = int(nd) if nd else ARRIVAL_DAYS
+        WIN["since"] = min(SINCE, TODAY - dt.timedelta(days=int(nd))) if nd else SINCE
         if not tm_ids:
             note("TMDB provider not found for", name)
         if not jw_short:
@@ -1464,7 +1551,7 @@ def main():
     }
     (OUT / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=1), encoding="utf-8")
     (OUT / "status.json").write_text(json.dumps(
-        {"updated": NOW.strftime("%Y-%m-%d %H:%M IST"), "catalogs": STATUS, "notes": NOTES[-60:]},
+        {"updated": NOW.strftime("%Y-%m-%d %H:%M IST"), "catalogs": STATUS, "notes": NOTES[-150:]},
         ensure_ascii=False, indent=1), encoding="utf-8")
 
     for sub in ("posters", "catalog/movie", "catalog/series", "meta/movie", "meta/series"):
