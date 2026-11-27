@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-27 10:26 IST",
+ "updated": "2026-11-27 11:07 IST",
  "catalogs": {
   "in2-cinema-now": {
    "name": "Now Showing in Cinema",
@@ -18,8 +18,8 @@
   },
   "in2-netflix-new-series": {
    "name": "Netflix New Release",
-   "source": "justwatch+tmdb",
-   "items": 103
+   "source": "justwatch-new+justwatch+tmdb",
+   "items": 134
   },
   "in2-netflix-top-movie": {
    "name": "Netflix Top 10",
@@ -38,8 +38,8 @@
   },
   "in2-prime-video-new-series": {
    "name": "Prime Video New Release",
-   "source": "justwatch+tmdb",
-   "items": 49
+   "source": "justwatch-new+justwatch+tmdb",
+   "items": 108
   },
   "in2-prime-video-top-movie": {
    "name": "Prime Video Top 10",
@@ -58,8 +58,8 @@
   },
   "in2-jiohotstar-new-series": {
    "name": "JioHotstar New Release",
-   "source": "justwatch+tmdb",
-   "items": 73
+   "source": "justwatch-new+justwatch+tmdb",
+   "items": 96
   },
   "in2-jiohotstar-top-movie": {
    "name": "JioHotstar Top 10",
@@ -78,8 +78,8 @@
   },
   "in2-crunchyroll-new-series": {
    "name": "Crunchyroll New Release",
-   "source": "justwatch+tmdb",
-   "items": 35
+   "source": "justwatch-new+justwatch+tmdb",
+   "items": 82
   },
   "in2-crunchyroll-top-movie": {
    "name": "Crunchyroll Top 10",
@@ -98,127 +98,155 @@
   },
   "in2-mx-player-new-series": {
    "name": "MX Player New Release",
-   "source": "justwatch+tmdb",
-   "items": 3
+   "source": "tmdb",
+   "items": 4
   },
   "in2-mx-player-top-movie": {
    "name": "MX Player Top 10",
-   "source": "justwatch-top",
+   "source": "tmdb-popular",
    "items": 10
   },
   "in2-mx-player-top-series": {
    "name": "MX Player Top 10",
-   "source": "justwatch-top",
+   "source": "tmdb-popular",
    "items": 10
   },
   "in2-sonyliv-new-movie": {
    "name": "SonyLIV New Release",
-   "source": "justwatch-new+justwatch+tmdb",
+   "source": "justwatch-new+tmdb",
    "items": 149
   },
   "in2-sonyliv-new-series": {
    "name": "SonyLIV New Release",
-   "source": "justwatch+tmdb",
-   "items": 9
+   "source": "tmdb",
+   "items": 10
   },
   "in2-sonyliv-top-movie": {
    "name": "SonyLIV Top 10",
-   "source": "justwatch-top",
+   "source": "tmdb-popular",
    "items": 10
   },
   "in2-sonyliv-top-series": {
    "name": "SonyLIV Top 10",
-   "source": "justwatch-top",
+   "source": "tmdb-popular",
    "items": 10
   },
   "in2-zee5-new-movie": {
    "name": "Zee5 New Release",
-   "source": "justwatch-new+justwatch+tmdb",
+   "source": "justwatch-new+tmdb",
    "items": 150
   },
   "in2-zee5-new-series": {
    "name": "Zee5 New Release",
-   "source": "justwatch+tmdb",
-   "items": 8
+   "source": "tmdb",
+   "items": 7
   },
   "in2-zee5-top-movie": {
    "name": "Zee5 Top 10",
-   "source": "justwatch-top",
+   "source": "tmdb-popular",
    "items": 10
   },
   "in2-zee5-top-series": {
    "name": "Zee5 Top 10",
-   "source": "justwatch-top",
+   "source": "tmdb-popular",
    "items": 10
   },
   "in2-apple-tv-new-movie": {
    "name": "Apple TV+ New Release",
-   "source": "justwatch-new+justwatch+tmdb",
+   "source": "justwatch-new+tmdb",
    "items": 6
   },
   "in2-apple-tv-new-series": {
    "name": "Apple TV+ New Release",
-   "source": "justwatch+tmdb",
+   "source": "tmdb",
    "items": 6
   },
   "in2-apple-tv-top-movie": {
    "name": "Apple TV+ Top 10",
-   "source": "justwatch-top",
+   "source": "tmdb-popular",
    "items": 10
   },
   "in2-apple-tv-top-series": {
    "name": "Apple TV+ Top 10",
-   "source": "justwatch-top",
+   "source": "tmdb-popular",
    "items": 10
   },
   "in2-hoichoi-new-series": {
    "name": "Hoichoi New Release",
-   "source": "justwatch+tmdb",
+   "source": "tmdb",
    "items": 2
   },
   "in2-hoichoi-top-movie": {
    "name": "Hoichoi Top 10",
-   "source": "justwatch-top",
+   "source": "tmdb-popular",
    "items": 10
   },
   "in2-hoichoi-top-series": {
    "name": "Hoichoi Top 10",
-   "source": "justwatch-top",
+   "source": "tmdb-popular",
    "items": 10
   }
  },
  "notes": [
-  "BookMyShow failed: BookMyShow HTTP 403",
-  "BookMyShow failed: BookMyShow HTTP 403",
-  "FlixPatrol netflix HTTP 403",
-  "item failed in2-netflix-new-movie 1843934 404 Client Error: Not Found for url: https://api.themoviedb.org/3/movie/1843934?append_to_response=external_ids%2Crelease_dates%2Cimages&language=en-US&include_image_language=en%2Cnull%2Chi%2Cbn%2Ct",
-  "Netflix : FlixPatrol data not available",
-  "Tudum series: only 6/9 titles resolved on TMDB",
-  "Netflix : FlixPatrol data not available",
-  "FlixPatrol amazon-prime HTTP 403",
-  "Prime Video : FlixPatrol data not available",
-  "Prime Video : FlixPatrol data not available",
-  "FlixPatrol jiohotstar HTTP 403",
-  "FlixPatrol hotstar HTTP 403",
-  "item failed in2-jiohotstar-new-movie 1629082 404 Client Error: Not Found for url: https://api.themoviedb.org/3/movie/1629082?append_to_response=external_ids%2Crelease_dates%2Cimages&language=en-US&include_image_language=en%2Cnull%2Chi%2Cbn%",
-  "item failed in2-jiohotstar-new-movie 1786842 404 Client Error: Not Found for url: https://api.themoviedb.org/3/movie/1786842?append_to_response=external_ids%2Crelease_dates%2Cimages&language=en-US&include_image_language=en%2Cnull%2Chi%2Cbn%",
-  "JioHotstar : FlixPatrol data not available",
-  "item failed in2-jiohotstar-top-movie 1786842 404 Client Error: Not Found for url: https://api.themoviedb.org/3/movie/1786842?append_to_response=external_ids%2Crelease_dates%2Cimages&language=en-US&include_image_language=en%2Cnull%2Chi%2Cbn%",
-  "JioHotstar : FlixPatrol data not available",
-  "FlixPatrol mx-player HTTP 403",
-  "MX Player : FlixPatrol data not available",
-  "MX Player : FlixPatrol data not available",
-  "FlixPatrol sony-liv HTTP 403",
-  "FlixPatrol sonyliv HTTP 403",
-  "SonyLIV : FlixPatrol data not available",
-  "SonyLIV : FlixPatrol data not available",
-  "FlixPatrol zee5 HTTP 403",
   "Zee5 : FlixPatrol data not available",
+  "Zee5 movie from_jw failed: 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "Zee5 : FlixPatrol data not available",
+  "Zee5 series from_jw failed: 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "FlixPatrol apple-tv HTTP 403",
+  "JW arrivals day failed 2026-11-25 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-11-24 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-11-27 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-11-26 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals: no series in combined feed, retrying with SHOW only. types: {'MOVIE': 707, 'SHOW_SEASON': 658}",
+  "JW arrivals SHOW day failed 2026-11-27 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-25 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-24 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-26 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-23 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-22 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-21 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-20 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-19 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-16 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-17 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-18 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-15 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-12 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-14 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-13 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-10 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-09 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-08 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-11 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-06 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-05 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-04 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-07 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-03 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-10-31 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-02 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-11-01 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-10-30 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-10-29 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-10-28 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JustWatch recent failed 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JustWatch popular failed 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JustWatch recent failed 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JustWatch popular failed 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "Apple TV+ : FlixPatrol data not available",
+  "Apple TV+ movie from_jw failed: 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "Apple TV+ : FlixPatrol data not available",
+  "Apple TV+ series from_jw failed: 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-11-25 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-11-24 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-11-26 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-11-27 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JustWatch recent failed 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JustWatch popular failed 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "no data for Hoichoi new movie",
-  "item failed in2-hoichoi-top-series 111744 404 Client Error: Not Found for url: https://api.themoviedb.org/3/tv/111744?append_to_response=external_ids%2Ccontent_ratings%2Cimages&language=en-US&include_image_language=en%2Cnull%2Chi%2Cbn%2Cta%"
+  "JustWatch recent failed 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JustWatch popular failed 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "Hoichoi movie from_jw failed: 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "Hoichoi series from_jw failed: 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql"
  ]
 }
