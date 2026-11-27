@@ -87,7 +87,7 @@ def log(*a):
 def note(*a):
     msg = " ".join(str(x) for x in a)
     print(msg, flush=True)
-    NOTES.append(msg[:240])
+    NOTES.append(msg[:400])
 
 
 # ---------------------------------------------------------------- TMDB
@@ -154,19 +154,40 @@ def ott_date(d):
     return best
 
 
-def best_logo(d):
-    """TMDB title artwork (PNG). Original-language logo first, then English, then language-neutral."""
+def is_latin(text):
+    letters = [c for c in (text or "") if c.isalpha()]
+    return bool(letters) and sum(ord(c) < 0x250 for c in letters) / len(letters) >= 0.8
+
+
+def pick_title_art(d):
+    """Returns (logo_path, text). English title -> English logo, else the English title as text.
+    Only when no English (Latin) title exists: original-language logo, else the original title as text."""
     logos = [l for l in (d.get("images") or {}).get("logos", [])
              if (l.get("file_path") or "").lower().endswith(".png")]
+    en = (d.get("title") or d.get("name") or "").strip()
+    orig_title = (d.get("original_title") or d.get("original_name") or "").strip()
     orig = (d.get("original_language") or "").lower()
 
-    def rank(l):
-        iso = l.get("iso_639_1")
-        pref = 3 if iso == orig else 2 if iso == "en" else 1 if iso is None else 0
-        return (pref, l.get("vote_average") or 0, l.get("width") or 0)
+    def best(pred):
+        c = [l for l in logos if pred(l.get("iso_639_1"))]
+        c.sort(key=lambda l: (l.get("vote_average") or 0, l.get("width") or 0), reverse=True)
+        return c[0]["file_path"] if c else None
 
-    logos.sort(key=rank, reverse=True)
-    return logos[0]["file_path"] if logos else None
+    if is_latin(en):
+        return best(lambda i: i == "en"), en
+    return best(lambda i: i == orig) or best(lambda i: True), (en or orig_title)
+
+
+def best_logo(d):
+    return pick_title_art(d)[0]
+
+
+def best_backdrop(d):
+    """Prefer a text-free backdrop, so the only title on the card is ours."""
+    bs = [b for b in (d.get("images") or {}).get("backdrops", []) if b.get("iso_639_1") is None
+          and (b.get("width") or 0) >= 1000]
+    bs.sort(key=lambda b: (b.get("vote_average") or 0, b.get("width") or 0), reverse=True)
+    return bs[0]["file_path"] if bs else None
 
 
 def latest_season(d):
@@ -201,7 +222,7 @@ def year_range(kind, d):
 
 def details(kind, tid):
     """kind is 'movie' or 'tv'."""
-    key = f"v5:{kind}:{tid}"
+    key = f"v6:{kind}:{tid}"
     hit = CACHE.get(key)
     if hit and time.time() - hit["t"] < 3 * 86400:
         return hit
@@ -216,7 +237,7 @@ def details(kind, tid):
                 rating = float(o["imdbRating"])
         except Exception:
             pass
-    path = d.get("backdrop_path") or d.get("poster_path")
+    path = best_backdrop(d) or d.get("backdrop_path") or d.get("poster_path")
     rec = {
         "t": time.time(),
         "title": d.get("title") or d.get("name") or "",
@@ -229,8 +250,9 @@ def details(kind, tid):
         "rating": round(float(rating), 1),
         "img": f"https://image.tmdb.org/t/p/w780{path}" if path else None,
     }
-    lg = best_logo(d)
+    lg, ttext = pick_title_art(d)
     rec["logo"] = f"https://image.tmdb.org/t/p/w500{lg}" if lg else None
+    rec["title_text"] = ttext
     if kind == "movie":
         rec["ott_date"] = ott_date(d)
     else:
@@ -255,11 +277,11 @@ def find_imdb(kind, imdb):
     return tid
 
 
-def resolve(kind, title, year=None, strict=False):
+def resolve(kind, title, year=None, strict=False, need_year=False):
     nt = norm(title)
     if not nt:
         return None
-    ck = f"r1:{kind}:{nt}:{year or ''}" + (":s" if strict else "")
+    ck = f"r1:{kind}:{nt}:{year or ''}" + (":s" if strict else "") + (":y" if need_year else "")
     hit = CACHE.get(ck)
     if hit and hit.get("id") and time.time() - hit["t"] < 7 * 86400:
         return hit["id"]
@@ -268,10 +290,17 @@ def resolve(kind, title, year=None, strict=False):
     if year:
         p["year" if kind == "movie" else "first_air_date_year"] = year
     res = tmdb(ep, **p).get("results", [])
-    if not res and year:
+    if not res and year and not need_year:
         p.pop("year", None)
         p.pop("first_air_date_year", None)
         res = tmdb(ep, **p).get("results", [])
+    if need_year and year:
+        def ry(r):
+            try:
+                return int(((r.get("release_date") or r.get("first_air_date") or "")[:4]) or 0)
+            except ValueError:
+                return 0
+        res = [r for r in res if abs(ry(r) - int(year)) <= 1]
     if not res:
         return None
     exact = [r for r in res[:8]
@@ -301,7 +330,8 @@ def resolve_many(kind, items, limit=10):
             if not title:
                 continue
             try:
-                tid = resolve(kind, title, year or None)
+                # JustWatch items: only accept a title whose year matches (avoids same-name English titles)
+                tid = resolve(kind, title, year or None, need_year=bool(year and isinstance(it, dict)))
             except Exception:
                 tid = None
         if tid and tid not in ids:
@@ -951,9 +981,90 @@ def fetch_title_logo(url):
     return TLOGO[url]
 
 
+SCRIPTS = [(0x0900, 0x097F, "Devanagari"), (0x0980, 0x09FF, "Bengali"), (0x0A00, 0x0A7F, "Gurmukhi"),
+           (0x0A80, 0x0AFF, "Gujarati"), (0x0B80, 0x0BFF, "Tamil"), (0x0C00, 0x0C7F, "Telugu"),
+           (0x0C80, 0x0CFF, "Kannada"), (0x0D00, 0x0D7F, "Malayalam"), (0x0E00, 0x0E7F, "Thai"),
+           (0x3040, 0x30FF, "CJK"), (0x4E00, 0x9FFF, "CJK"), (0xAC00, 0xD7AF, "CJK"), (0x0600, 0x06FF, "Arabic")]
+FONT_MISSING = set()
+
+
+def title_font(text, size):
+    scr = None
+    for ch in text:
+        for lo, hi, nm in SCRIPTS:
+            if lo <= ord(ch) <= hi:
+                scr = nm
+                break
+        if scr:
+            break
+    if not scr:
+        return font(size)
+    import glob
+    pats = ([f"/usr/share/fonts/**/NotoSansCJK*Bold*", "/usr/share/fonts/**/NotoSansCJK*"] if scr == "CJK"
+            else [f"/usr/share/fonts/**/NotoSans{scr}-Bold.ttf", f"/usr/share/fonts/**/NotoSans{scr}*Bold*.ttf",
+                  f"/usr/share/fonts/**/NotoSans{scr}*.ttf"])
+    for pat in pats:
+        for f in glob.glob(pat, recursive=True):
+            try:
+                return ImageFont.truetype(f, size)
+            except OSError:
+                continue
+    if scr not in FONT_MISSING:
+        FONT_MISSING.add(scr)
+        note("No font for", scr, "titles. Add 'sudo apt-get install -y fonts-noto-core fonts-noto-cjk' to the workflow.")
+    return None
+
+
+def draw_title_text(im, text):
+    """English (or, if none exists, original-language) title as bold text at the bottom-right."""
+    text = (text or "").strip()
+    if not text:
+        return im
+    box_w, box_h, mr, mb = 270, 112, 24, 22
+    d0 = ImageDraw.Draw(im)
+    chosen = None
+    for size in range(44, 17, -2):
+        f = title_font(text, size)
+        if f is None:
+            return im
+        words, lines, cur = text.split(), [], ""
+        for w in words:
+            t = (cur + " " + w).strip()
+            if d0.textlength(t, font=f) <= box_w or not cur:
+                cur = t
+            else:
+                lines.append(cur)
+                cur = w
+        lines.append(cur)
+        lh = int(size * 1.15)
+        if len(lines) <= 3 and len(lines) * lh <= box_h and max(d0.textlength(x, font=f) for x in lines) <= box_w:
+            chosen = (f, lines, lh)
+            break
+    if chosen is None:
+        f = title_font(text, 18)
+        if f is None:
+            return im
+        chosen = (f, [text[:22] + "\u2026"], 22)
+    f, lines, lh = chosen
+    y = im.height - mb - len(lines) * lh
+    sh = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    ds = ImageDraw.Draw(sh)
+    for i, ln in enumerate(lines):
+        x = im.width - mr - d0.textlength(ln, font=f)
+        ds.text((x + 2, y + i * lh + 3), ln, font=f, fill=(0, 0, 0, 200))
+    im = Image.alpha_composite(im, sh.filter(ImageFilter.GaussianBlur(4)))
+    d = ImageDraw.Draw(im)
+    for i, ln in enumerate(lines):
+        x = im.width - mr - d.textlength(ln, font=f)
+        d.text((x, y + i * lh), ln, font=f, fill=(255, 255, 255, 255), stroke_width=2, stroke_fill=(0, 0, 0, 255))
+    return im
+
+
 def draw_title_logo(im, rec):
-    """Movie/series title artwork at the bottom-right (text fallback when no logo exists)."""
+    """Movie/series title artwork at the bottom-right (title text when no logo exists)."""
     lg = fetch_title_logo(rec.get("logo"))
+    if lg is None:
+        return draw_title_text(im, rec.get("title_text") or rec.get("title"))
     box_w, box_h, mr, mb = 270, 112, 24, 22
     if lg is not None:
         k = min(box_w / lg.width, box_h / lg.height)
@@ -1330,7 +1441,9 @@ def top_ids(plat, kind, tudum, flix, jw_short, tm_ids):
 
     def from_jw():
         if jw_short:
-            add(resolve_many(kind, jw_popular(jw_short, kind, first=40), limit=TOP_POOL), "justwatch-top")
+            raw = jw_popular(jw_short, kind, first=40)
+            note(f"JW top {name} {kind}:", [i.get("title") for i in raw[:10]])
+            add(resolve_many(kind, raw, limit=TOP_POOL), "justwatch-top")
         else:
             note(name, ": JustWatch package not found")
 
@@ -1361,7 +1474,7 @@ def top_ids(plat, kind, tudum, flix, jw_short, tm_ids):
 
 def prefetch(tk, ids):
     """Fetch TMDB details in parallel (fills the cache) so big lists stay fast."""
-    todo = [t for t in ids if f"v5:{tk}:{t}" not in CACHE]
+    todo = [t for t in ids if f"v6:{tk}:{t}" not in CACHE]
 
     def one(t):
         try:
@@ -1379,6 +1492,7 @@ def new_ids(kind, tk, jw_short, tm_ids):
         try:
             arr = [i for i in jw_arrivals(jw_short) if i["kind"] == kind]
             arr.sort(key=lambda i: i["date"], reverse=True)
+            note(f"JW arrivals {jw_short} {kind}: {len(arr)} titles in {WIN['days']} days")
             for it in arr:
                 got = resolve_many(kind, [it], limit=1)
                 if got:
@@ -1566,4 +1680,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
