@@ -394,7 +394,7 @@ def flix_fetch(slugs):
         try:
             r = S.get(url, timeout=30)
             if r.status_code != 200:
-                log("FlixPatrol", slug, "HTTP", r.status_code)
+                note("FlixPatrol", slug, "HTTP", r.status_code)
                 continue
             movies, shows = [], []
             for typ, title in re.findall(r'href="/(movie|tv-show)/[^"]*"[^>]*>\s*([^<]+?)\s*</a>', r.text):
@@ -404,7 +404,7 @@ def flix_fetch(slugs):
                     lst.append(title)
             if len(movies) >= 3 or len(shows) >= 3:
                 return {"movie": movies[:10], "series": shows[:10]}
-            log("FlixPatrol", slug, "no titles parsed")
+            note("FlixPatrol", slug, "no titles parsed")
         except Exception as e:
             note("FlixPatrol failed", slug, e)
     return None
@@ -413,10 +413,14 @@ def flix_fetch(slugs):
 # ---------------------------------------------------------------- JustWatch
 def jw_query(query, variables=None):
     r = S.post(JW_URL, json={"query": query, "variables": variables or {}}, timeout=60)
-    r.raise_for_status()
-    j = r.json()
+    try:
+        j = r.json()
+    except ValueError:
+        r.raise_for_status()
+        raise
     if j.get("errors") and not j.get("data"):
-        raise RuntimeError(j["errors"][0].get("message", "JustWatch error"))
+        raise RuntimeError(f"HTTP {r.status_code}: " + str(j["errors"][0].get("message", "JustWatch error"))[:200])
+    r.raise_for_status()
     return j["data"]
 
 
@@ -479,6 +483,115 @@ def jw_popular(packages, kind, first=100, year_min=None):
         out.append({"title": c.get("title"), "year": c.get("originalReleaseYear"),
                     "date": c.get("originalReleaseDate"), "tmdb": ext.get("tmdbId")})
     return out
+
+
+# ---------------------------------------------------------------- JustWatch "new arrivals" (added to platform on date X)
+ARRIVAL_DAYS = int(CFG.get("arrival_days", 30))
+ARR_DATES = {}                 # (tmdb kind, tmdb id) -> arrival date (YYYY-MM-DD)
+ARR_MEMO = {}
+ARR_STATE = {"broken": False, "variant": None}
+
+_NEW_FIELDS = """objectType
+      content(country: $country, language: $language) {
+        title originalReleaseYear originalReleaseDate externalIds { imdbId tmdbId } }"""
+JW_NEW_VARIANTS = [
+    {"paged": True, "q": """query New($country: Country!, $language: Language!, $date: Date!, $first: Int!,
+  $after: String, $filter: TitleFilter) {
+  newTitles(country: $country, date: $date, first: $first, after: $after, filter: $filter) {
+    pageInfo { endCursor hasNextPage }
+    edges { node { """ + _NEW_FIELDS + """ } } } }"""},
+    {"paged": False, "q": """query New($country: Country!, $language: Language!, $date: Date!, $first: Int!,
+  $filter: TitleFilter) {
+  newTitles(country: $country, date: $date, first: $first, filter: $filter) {
+    edges { node { """ + _NEW_FIELDS + """ } } } }"""},
+]
+
+
+def jw_diag():
+    """Writes the real names of JustWatch's 'new' queries into status.json notes (for fixing)."""
+    try:
+        d = jw_query('{ __type(name: "Query") { fields { name args { name type { name ofType { name } } } } } }')
+        for f in d["__type"]["fields"]:
+            if "new" in f["name"].lower():
+                args = ", ".join(a["name"] + ":" + str(a["type"].get("name") or (a["type"].get("ofType") or {}).get("name"))
+                                 for a in f["args"])
+                note("JW query:", f["name"], "(", args, ")")
+    except Exception as e:
+        note("JW introspection failed:", e)
+
+
+def _jw_day(pkgs, day, variant):
+    flt = {"packages": pkgs, "objectTypes": ["MOVIE", "SHOW"]}
+    out, after = [], None
+    for _ in range(5):
+        v = {"country": COUNTRY, "language": "en", "date": str(day), "first": 100, "filter": flt}
+        if variant["paged"]:
+            v["after"] = after
+        d = jw_query(variant["q"], v)["newTitles"]
+        edges = d.get("edges") if isinstance(d, dict) else d
+        for e in edges or []:
+            n = (e or {}).get("node") or e or {}
+            c = n.get("content") or {}
+            ext = c.get("externalIds") or {}
+            if not c.get("title"):
+                continue
+            out.append({"kind": "movie" if n.get("objectType") == "MOVIE" else "series",
+                        "title": c.get("title"), "year": c.get("originalReleaseYear"),
+                        "tmdb": ext.get("tmdbId"), "date": str(day)})
+        pi = d.get("pageInfo") if isinstance(d, dict) else None
+        if not (variant["paged"] and pi and pi.get("hasNextPage") and pi.get("endCursor")):
+            break
+        after = pi["endCursor"]
+    return out
+
+
+def jw_arrivals(pkgs):
+    """Titles that were ADDED to these platforms in the last ARRIVAL_DAYS days (what JustWatch 'New' shows)."""
+    key = "+".join(sorted(pkgs))
+    if key in ARR_MEMO:
+        return ARR_MEMO[key]
+    if ARR_STATE["broken"]:
+        return []
+    if ARR_STATE["variant"] is None:
+        errs = []
+        for var in JW_NEW_VARIANTS:
+            try:
+                _jw_day(pkgs, TODAY - dt.timedelta(days=1), var)
+                ARR_STATE["variant"] = var
+                break
+            except Exception as e:
+                errs.append(str(e)[:200])
+        if ARR_STATE["variant"] is None:
+            for e in errs:
+                note("JW new-arrivals failed:", e)
+            jw_diag()
+            ARR_STATE["broken"] = True
+            return []
+    var = ARR_STATE["variant"]
+    start = max(SINCE, TODAY - dt.timedelta(days=ARRIVAL_DAYS))
+    days = [TODAY - dt.timedelta(days=i) for i in range((TODAY - start).days + 1)]
+    res, todo = [], []
+    for day in days:
+        hit = CACHE.get(f"jwn1:{key}:{day}")
+        if hit and (day < TODAY - dt.timedelta(days=3)) and time.time() - hit["t"] < 40 * 86400:
+            res += hit["items"]
+        else:
+            todo.append(day)
+
+    def one(day):
+        try:
+            items = _jw_day(pkgs, day, var)
+            CACHE[f"jwn1:{key}:{day}"] = {"t": time.time(), "items": items}
+            return items
+        except Exception as e:
+            note("JW arrivals day failed", str(day), str(e)[:120])
+            return []
+
+    with ThreadPoolExecutor(max_workers=4) as ex:
+        for items in ex.map(one, todo):
+            res += items
+    ARR_MEMO[key] = res
+    return res
 
 
 # ---------------------------------------------------------------- Gemini (optional last resort)
@@ -926,6 +1039,13 @@ def make_poster(rec, rank, dest, prov, mode, tag):
     else:
         im = render_info(base, rec, prov, logo, tag, weekday=(mode == "cinema"))
     im.save(dest, "JPEG", quality=84)# ---------------------------------------------------------------- Catalog building
+def arrival_date(tk, tid):
+    try:
+        return dt.date.fromisoformat(ARR_DATES.get((tk, tid)) or "")
+    except Exception:
+        return None
+
+
 def eff_date(tk, rec):
     """Date a title counts as 'new' on the platform: OTT premiere (movies) / latest season (series)
     or the original date, whichever falls in the window."""
@@ -954,7 +1074,7 @@ def build_catalog(catid, name, kind, ids, mode, prov, src, tag=None):
             n = rank + 1
             rv, tag_i = dict(rec), tag
             if mode == "new":
-                d = eff_date(tkind, rec)
+                d = eff_date(tkind, rec) or arrival_date(tkind, tid)
                 if d:
                     rv["date"] = str(d)
                     if tkind == "tv" and (rec.get("season") or 1) > 1 and rec.get("season_date") == str(d):
@@ -1165,9 +1285,22 @@ def prefetch(tk, ids):
 def new_ids(kind, tk, jw_short, tm_ids):
     ids, src = [], []
     if jw_short:
+        try:
+            arr = [i for i in jw_arrivals(jw_short) if i["kind"] == kind]
+            arr.sort(key=lambda i: i["date"], reverse=True)
+            for it in arr:
+                got = resolve_many(kind, [it], limit=1)
+                if got:
+                    ARR_DATES.setdefault((tk, got[0]), it["date"])
+                    if got[0] not in ids:
+                        ids.append(got[0])
+            if ids:
+                src.append("justwatch-new")
+        except Exception as e:
+            note("JustWatch arrivals failed", e)
         items = []
         try:
-            items += jw_recent(jw_short, kind, SINCE.year)
+            items += jw_recent(jw_short, kind, SINCE.year, pages=min(NEW_PAGES, 8))
         except Exception as e:
             note("JustWatch recent failed", e)
         try:
@@ -1175,7 +1308,9 @@ def new_ids(kind, tk, jw_short, tm_ids):
         except Exception as e:
             note("JustWatch popular failed", e)
         if items:
-            ids = resolve_many(kind, items, limit=2000)
+            for t in resolve_many(kind, items, limit=2000):
+                if t not in ids:
+                    ids.append(t)
             src.append("justwatch")
     if tm_ids:
         try:
@@ -1189,7 +1324,7 @@ def new_ids(kind, tk, jw_short, tm_ids):
     keep = []
     for tid in ids:
         try:
-            d = eff_date(tk, details(tk, tid))
+            d = arrival_date(tk, tid) or eff_date(tk, details(tk, tid))
         except Exception:
             continue
         if d:
