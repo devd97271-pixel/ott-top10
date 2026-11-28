@@ -278,11 +278,11 @@ def find_imdb(kind, imdb):
     return tid
 
 
-def resolve(kind, title, year=None, strict=False, need_year=False):
+def resolve(kind, title, year=None, strict=False, need_year=False, year_tol=1):
     nt = norm(title)
     if not nt:
         return None
-    ck = f"r1:{kind}:{nt}:{year or ''}" + (":s" if strict else "") + (":y" if need_year else "")
+    ck = f"r1:{kind}:{nt}:{year or ''}" + (":s" if strict else "") + (":y" if need_year else "") + (f":t{year_tol}" if year_tol != 1 else "")
     hit = CACHE.get(ck)
     if hit and hit.get("id") and time.time() - hit["t"] < 7 * 86400:
         return hit["id"]
@@ -301,7 +301,7 @@ def resolve(kind, title, year=None, strict=False, need_year=False):
                 return int(((r.get("release_date") or r.get("first_air_date") or "")[:4]) or 0)
             except ValueError:
                 return 0
-        res = [r for r in res if abs(ry(r) - int(year)) <= 1]
+        res = [r for r in res if abs(ry(r) - int(year)) <= year_tol]
     if not res:
         return None
     exact = [r for r in res[:8]
@@ -1487,46 +1487,85 @@ def prefetch(tk, ids):
         list(ex.map(one, todo))
 
 
+def cap_by_days(keep):
+    """keep: [(date, tid)] newest first. Latest NEW_LIMIT titles; a single day with more than
+    NEW_LIMIT releases is shown completely (up to NEW_MAX)."""
+    if len(keep) <= NEW_LIMIT:
+        return [t for _, t in keep]
+    days, order = {}, []
+    for d, t in keep:
+        if d not in days:
+            days[d] = []
+            order.append(d)
+        days[d].append(t)
+    out = []
+    for d in order:
+        grp = days[d]
+        if len(out) + len(grp) <= NEW_LIMIT:
+            out += grp
+        else:
+            out += grp if len(grp) > NEW_LIMIT else grp[:NEW_LIMIT - len(out)]
+            break
+        if len(out) >= NEW_LIMIT:
+            break
+    return out[:NEW_MAX]
+
+
 def new_ids(kind, tk, jw_short, tm_ids):
     ids, src = [], []
+    used_arrivals = False
     if jw_short:
         try:
             arr = [i for i in jw_arrivals(jw_short) if i["kind"] == kind]
-            arr.sort(key=lambda i: i["date"], reverse=True)
+            arr.sort(key=lambda i: i["date"], reverse=True)          # newest day first, JustWatch order inside a day
             note(f"JW arrivals {jw_short} {kind}: {len(arr)} titles in {WIN['days']} days")
-            for it in arr:
-                got = resolve_many(kind, [it], limit=1)
-                if got:
-                    ARR_DATES.setdefault((tk, got[0]), it["date"])
-                    if got[0] not in ids:
-                        ids.append(got[0])
-            if ids:
+            if arr:
+                used_arrivals = True
+                bydate, order = {}, []
+                for it in arr:
+                    if it["date"] not in bydate:
+                        bydate[it["date"]] = []
+                        order.append(it["date"])
+                    bydate[it["date"]].append(it)
+                miss = []
+                for day in order:                                     # resolve day by day, stop when the row is full
+                    for it in bydate[day]:
+                        got = resolve_many(kind, [it], limit=1)
+                        if not got and it.get("title") and it.get("year"):
+                            try:
+                                t2 = resolve(kind, it["title"], it["year"], strict=True, need_year=True, year_tol=3)
+                            except Exception:
+                                t2 = None
+                            got = [t2] if t2 else []
+                        if got:
+                            ARR_DATES.setdefault((tk, got[0]), it["date"])
+                            if got[0] not in ids:
+                                ids.append(got[0])
+                        else:
+                            miss.append(it.get("title"))
+                    if len(ids) >= NEW_LIMIT + 8:
+                        break
+                if miss:
+                    note(f"JW arrivals {jw_short} {kind}: not found on TMDB ({len(miss)}):", miss[:8])
                 src.append("justwatch-new")
         except Exception as e:
             note("JustWatch arrivals failed", e)
-        items = []
-        try:
-            if len(ids) >= NEW_LIMIT:
-                raise StopIteration
-            items += jw_recent(jw_short, kind, WIN["since"].year, pages=min(NEW_PAGES, 8))
-        except StopIteration:
-            pass
-        except Exception as e:
-            note("JustWatch recent failed", e)
-        try:
-            if len(ids) >= NEW_LIMIT:
-                raise StopIteration
-            items += jw_popular(jw_short, kind, first=100, year_min=WIN["since"].year)
-        except StopIteration:
-            pass
-        except Exception as e:
-            note("JustWatch popular failed", e)
-        if items:
-            for t in resolve_many(kind, items, limit=2000):
-                if t not in ids:
-                    ids.append(t)
-            src.append("justwatch")
-    if tm_ids and len(ids) < NEW_LIMIT:
+        if not used_arrivals:
+            items = []
+            try:
+                items += jw_recent(jw_short, kind, WIN["since"].year, pages=min(NEW_PAGES, 8))
+            except Exception as e:
+                note("JustWatch recent failed", e)
+            try:
+                items += jw_popular(jw_short, kind, first=100, year_min=WIN["since"].year)
+            except Exception as e:
+                note("JustWatch popular failed", e)
+            if items:
+                for t in resolve_many(kind, items, limit=2000):
+                    if t not in ids:
+                        ids.append(t)
+                src.append("justwatch")
+    if tm_ids and not used_arrivals:
         try:
             for tid in tmdb_provider_new(tk, tm_ids, WIN["since"]):
                 if tid not in ids:
@@ -1543,12 +1582,8 @@ def new_ids(kind, tk, jw_short, tm_ids):
             continue
         if d:
             keep.append((d, tid))
-    keep.sort(key=lambda x: x[0], reverse=True)  # newest first
-    if len(keep) > NEW_LIMIT:
-        # latest NEW_LIMIT titles; if the last kept day has more releases, keep that whole day (up to NEW_MAX)
-        cut = keep[NEW_LIMIT - 1][0]
-        keep = [k for k in keep if k[0] >= cut][:NEW_MAX]
-    return [t for _, t in keep], "+".join(src) or "none"
+    keep.sort(key=lambda x: x[0], reverse=True)   # newest first (stable: JustWatch order inside a day)
+    return cap_by_days(keep), "+".join(src) or "none"
 
 
 def main():
@@ -1662,7 +1697,7 @@ def main():
     if not cats:
         sys.exit("No catalogs produced; keeping old files")
 
-    write_all_meta()
+write_all_meta()
     (OUT / ".nojekyll").write_text("", encoding="utf-8")
 
     manifest = {
@@ -1693,4 +1728,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-            
+    
