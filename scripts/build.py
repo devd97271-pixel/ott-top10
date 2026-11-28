@@ -41,7 +41,8 @@ JW_URL = "https://apis.justwatch.com/graphql"
 NOW = dt.datetime.now(dt.timezone.utc) + dt.timedelta(hours=5, minutes=30)
 TODAY = NOW.date()  # India date
 NEW_DAYS = int(CFG.get("new_release_days", 30))
-NEW_LIMIT = int(CFG.get("new_limit", 150))
+NEW_LIMIT = int(CFG.get("new_limit", 20))
+NEW_MAX = int(CFG.get("new_max", 100))     # safety cap when one day has more than new_limit releases
 NEW_PAGES = int(CFG.get("new_pages", 15))
 LOGO_MODES = set(CFG.get("title_logo_on", ["top10", "new", "cinema"]))  # top10 / new / cinema
 META_ALL = bool(CFG.get("meta_for_all", True))
@@ -1505,11 +1506,19 @@ def new_ids(kind, tk, jw_short, tm_ids):
             note("JustWatch arrivals failed", e)
         items = []
         try:
+            if len(ids) >= NEW_LIMIT:
+                raise StopIteration
             items += jw_recent(jw_short, kind, WIN["since"].year, pages=min(NEW_PAGES, 8))
+        except StopIteration:
+            pass
         except Exception as e:
             note("JustWatch recent failed", e)
         try:
+            if len(ids) >= NEW_LIMIT:
+                raise StopIteration
             items += jw_popular(jw_short, kind, first=100, year_min=WIN["since"].year)
+        except StopIteration:
+            pass
         except Exception as e:
             note("JustWatch popular failed", e)
         if items:
@@ -1517,7 +1526,7 @@ def new_ids(kind, tk, jw_short, tm_ids):
                 if t not in ids:
                     ids.append(t)
             src.append("justwatch")
-    if tm_ids:
+    if tm_ids and len(ids) < NEW_LIMIT:
         try:
             for tid in tmdb_provider_new(tk, tm_ids, WIN["since"]):
                 if tid not in ids:
@@ -1535,7 +1544,11 @@ def new_ids(kind, tk, jw_short, tm_ids):
         if d:
             keep.append((d, tid))
     keep.sort(key=lambda x: x[0], reverse=True)  # newest first
-    return [t for _, t in keep][:NEW_LIMIT], "+".join(src) or "none"
+    if len(keep) > NEW_LIMIT:
+        # latest NEW_LIMIT titles; if the last kept day has more releases, keep that whole day (up to NEW_MAX)
+        cut = keep[NEW_LIMIT - 1][0]
+        keep = [k for k in keep if k[0] >= cut][:NEW_MAX]
+    return [t for _, t in keep], "+".join(src) or "none"
 
 
 def main():
@@ -1680,3 +1693,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+            
