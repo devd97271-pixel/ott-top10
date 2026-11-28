@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-28 20:14 IST",
+ "updated": "2026-11-28 20:34 IST",
  "catalogs": {
   "in2-cinema-now": {
    "name": "Now Showing in Cinema",
@@ -9,7 +9,7 @@
   "in2-cinema-upcoming": {
    "name": "Upcoming in Cinema",
    "source": "tmdb",
-   "items": 49
+   "items": 57
   },
   "in2-netflix-new-movie": {
    "name": "Netflix New Release",
@@ -19,7 +19,7 @@
   "in2-netflix-new-series": {
    "name": "Netflix New Release",
    "source": "justwatch-new",
-   "items": 16
+   "items": 20
   },
   "in2-netflix-top-movie": {
    "name": "Netflix Top 10",
@@ -39,7 +39,7 @@
   "in2-prime-video-new-series": {
    "name": "Prime Video New Release",
    "source": "justwatch-new",
-   "items": 15
+   "items": 20
   },
   "in2-prime-video-top-movie": {
    "name": "Prime Video Top 10",
@@ -59,7 +59,7 @@
   "in2-jiohotstar-new-series": {
    "name": "JioHotstar New Release",
    "source": "justwatch-new",
-   "items": 16
+   "items": 20
   },
   "in2-jiohotstar-top-movie": {
    "name": "JioHotstar Top 10",
@@ -79,16 +79,16 @@
   "in2-crunchyroll-new-series": {
    "name": "Crunchyroll New Release",
    "source": "justwatch-new",
-   "items": 18
+   "items": 20
   },
   "in2-crunchyroll-top-movie": {
    "name": "Crunchyroll Top 10",
-   "source": "justwatch-top",
+   "source": "justwatch-top+tmdb-popular",
    "items": 10
   },
   "in2-crunchyroll-top-series": {
    "name": "Crunchyroll Top 10",
-   "source": "justwatch-top",
+   "source": "justwatch-top+tmdb-popular",
    "items": 10
   },
   "in2-mx-player-new-movie": {
@@ -99,7 +99,7 @@
   "in2-mx-player-new-series": {
    "name": "MX Player New Release",
    "source": "justwatch-new",
-   "items": 17
+   "items": 20
   },
   "in2-mx-player-top-movie": {
    "name": "MX Player Top 10",
@@ -119,7 +119,7 @@
   "in2-sonyliv-new-series": {
    "name": "SonyLIV New Release",
    "source": "justwatch-new",
-   "items": 19
+   "items": 20
   },
   "in2-sonyliv-top-movie": {
    "name": "SonyLIV Top 10",
@@ -139,7 +139,7 @@
   "in2-zee5-new-series": {
    "name": "Zee5 New Release",
    "source": "justwatch-new",
-   "items": 18
+   "items": 20
   },
   "in2-zee5-top-movie": {
    "name": "Zee5 Top 10",
@@ -159,16 +159,16 @@
   "in2-apple-tv-new-series": {
    "name": "Apple TV+ New Release",
    "source": "justwatch-new",
-   "items": 4
+   "items": 5
   },
   "in2-apple-tv-top-movie": {
    "name": "Apple TV+ Top 10",
-   "source": "tmdb-popular",
+   "source": "justwatch-top",
    "items": 10
   },
   "in2-apple-tv-top-series": {
    "name": "Apple TV+ Top 10",
-   "source": "tmdb-popular",
+   "source": "justwatch-top",
    "items": 10
   },
   "in2-hoichoi-new-series": {
@@ -188,6 +188,61 @@
   }
  },
  "notes": [
+  "Netflix Tudum latest week for IN : 2026-11-22",
+  "BookMyShow failed: BookMyShow HTTP 403",
+  "BookMyShow failed: BookMyShow HTTP 403",
+  "Netflix | JW used: ['nfx'] | TMDB ids: ['8'] | JW names like it: ['Netflix=nfx', 'Netflix Kids=nfk']",
+  "FlixPatrol netflix HTTP 403",
+  "JW arrivals: no series in combined feed, retrying with SHOW only. types: {'MOVIE': 32}",
+  "JW arrivals types after retry: {'MOVIE': 54, 'SHOW_SEASON': 19}",
+  "JW arrivals ['nfx'] movie: 686 titles in 60 days",
+  "JW arrivals ['nfx'] series: 208 titles in 60 days",
+  "JW arrivals ['nfx'] series: not found on TMDB (81): ['Season 28', 'Season 1', 'Season 1', 'Season 1', 'Season 1', 'Nikko Kegon Falls Arc', '2nd-3rd STAGE', 'Season 1']",
+  "Netflix : FlixPatrol data not available",
+  "JW top Netflix movie: ['365 dni', 'Spider-Man: Brand New Day', 'Drishyam: The Conclusion', 'Baththa', 'Ranabaali', 'Pradhama Drishtiya Kuttakkar', 'Dorothy', '418', 'Vishwanath & Sons', 'Daayra']",
+  "Tudum series: approx match for Akka: The Protectors",
+  "Tudum series: not found on TMDB: ['Manglik', 'Roadies Rebirth', 'Papa Yaar by Zakir Khan']",
+  "Netflix : FlixPatrol data not available",
+  "JW top Netflix series: ['Akka', 'The Mentalist', 'Dhindora', \"India's Got Latent\", 'Black Clover', 'Dead-End Job', 'The Body', 'FROM', 'Money Heist', 'She']",
+  "Prime Video | JW used: ['prv'] | TMDB ids: ['119'] | JW names like it: ['Amazon Prime Video=prv']",
+  "FlixPatrol amazon-prime HTTP 403",
+  "JW arrivals: no series in combined feed, retrying with SHOW only. types: {'MOVIE': 72, 'SHOW_SEASON': 19}",
+  "JW arrivals ['prv'] movie: 1456 titles in 60 days",
+  "JW arrivals ['prv'] series: 365 titles in 60 days",
+  "JW arrivals ['prv'] series: not found on TMDB (63): ['Season 1', 'Season 1', 'Season 1', 'Season 3', 'Season 1', 'Season 4', 'Season 1', 'Season 5']",
+  "Prime Video : FlixPatrol data not available",
+  "JW top Prime Video movie: ['Jailer 2', 'Mirzapur: The Movie', 'The Vvaan: Force of the Forrest', 'How to Have Sex', 'Premada Oorali', 'Drishyam 3', 'Jailer', 'Vibe', 'Drive - The Pretenders', 'Dune']",
+  "Prime Video : FlixPatrol data not available",
+  "JW top Prime Video series: ['The Mentalist', 'Mirzapur', 'Campus Drivers', 'Off Campus', 'The Lord of the Rings: The Rings of Power', 'Love in Disguise', 'FROM', 'Dexter: Resurrection', 'Campus Diaries', 'Rise and Fall']",
+  "JioHotstar | JW used: ['jhs'] | TMDB ids: ['2336'] | JW names like it: ['JioHotstar=jhs']",
+  "FlixPatrol jiohotstar HTTP 403",
+  "FlixPatrol hotstar HTTP 403",
+  "JW arrivals: no series in combined feed, retrying with SHOW only. types: {'MOVIE': 107, 'SHOW_SEASON': 36}",
+  "JW arrivals ['jhs'] movie: 1066 titles in 60 days",
+  "JW arrivals ['jhs'] series: 411 titles in 60 days",
+  "JW arrivals ['jhs'] series: not found on TMDB (169): ['Season 4', 'Season 4', 'Season 1', 'Season-1', 'Season 3', 'Season 1', 'Season 8', 'Season 12']",
+  "JioHotstar : FlixPatrol data not available",
+  "JW top JioHotstar movie: ['Obsession', 'How to Have Sex', \"I'm Game\", 'Avengers Endgame: Encore', 'Tell Me What You Want', 'Gunche', 'Bethlehem Kudumba Unit', 'Mayookha', 'Together', 'Dhurandhar: The Revenge']",
+  "item failed in2-jiohotstar-top-movie 1786842 404 Client Error: Not Found for url: https://api.themoviedb.org/3/movie/1786842?append_to_response=external_ids%2Crelease_dates%2Cimages&language=en-US&include_image_language=en%2Cnull%2Chi%2Cbn%2Cta%2Cte%2Cml%2Ckn%2Cmr%2Cpa%2Cgu%2Cur%2Cor%2Cas%2Cko%2Cja%2Czh%2Cth%2Cid%2Ces%2Cfr%2Cde%2Cit%2Cpt%2Cru%2Ctr%2Car&api_key=3b419ee12410b5f6e71cc6e2e8e2ddc4",
+  "JioHotstar : FlixPatrol data not available",
+  "JW top JioHotstar series: ['Bigg Boss', 'The Mentalist', 'VisionQuest', 'Student of the Year: After Dark', 'Game of Thrones', 'MobLand', 'The Legend of Hanuman', 'Broken But Beautiful', 'Tôkyô Ribenjâzu', 'Pritam and Pedro']",
+  "Crunchyroll | JW used: ['cru'] | TMDB ids: ['283'] | JW names like it: ['Crunchyroll=cru']",
+  "JW arrivals: no series in combined feed, retrying with SHOW only. types: {'MOVIE': 124, 'SHOW_SEASON': 63}",
+  "JW arrivals ['cru'] movie: 32 titles in 60 days",
+  "item failed in2-crunchyroll-new-movie 635838 404 Client Error: Not Found for url: https://api.themoviedb.org/3/movie/635838?append_to_response=external_ids%2Crelease_dates%2Cimages&language=en-US&include_image_language=en%2Cnull%2Chi%2Cbn%2Cta%2Cte%2Cml%2Ckn%2Cmr%2Cpa%2Cgu%2Cur%2Cor%2Cas%2Cko%2Cja%2Czh%2Cth%2Cid%2Ces%2Cfr%2Cde%2Cit%2Cpt%2Cru%2Ctr%2Car&api_key=3b419ee12410b5f6e71cc6e2e8e2ddc4",
+  "item failed in2-crunchyroll-new-movie 1746478 404 Client Error: Not Found for url: https://api.themoviedb.org/3/movie/1746478?append_to_response=external_ids%2Crelease_dates%2Cimages&language=en-US&include_image_language=en%2Cnull%2Chi%2Cbn%2Cta%2Cte%2Cml%2Ckn%2Cmr%2Cpa%2Cgu%2Cur%2Cor%2Cas%2Cko%2Cja%2Czh%2Cth%2Cid%2Ces%2Cfr%2Cde%2Cit%2Cpt%2Cru%2Ctr%2Car&api_key=3b419ee12410b5f6e71cc6e2e8e2ddc4",
+  "JW arrivals ['cru'] series: 456 titles in 60 days",
+  "JW arrivals ['cru'] series: not found on TMDB (65): ['Season 1', 'Terraformars - Season 1', 'Season 1', 'Nikko Kegon Falls Arc', 'Season 1', 'The Iceblade Sorcerer Shall Rule the World II', 'Season 1', 'Stardust Crusaders']",
+  "JW top Crunchyroll movie: ['Demon Slayer: Kimetsu no Yaiba Infinity Castle', 'Your Name.', 'Chainsaw Man - The Movie: Reze Arc', 'Friday the 13th: The Final Chapter', 'Jujutsu Kaisen 0', 'A Silent Voice: The Movie', 'Suzume', 'Weathering with You', 'The Garden of Words', 'In This Corner of the World']",
+  "JW top Crunchyroll series: ['Black Clover', 'Tôkyô Ribenjâzu', 'Naruto: Shippûden', 'One Piece', 'Jujutsu Kaisen', 'Kimetsu no Yaiba', 'Naruto', 'Kusuriya no hitorigoto', 'Dragon Ball Super: Beerus', 'Classroom of the Elite']",
+  "MX Player | JW used: ['mxp'] | TMDB ids: ['515', '1898'] | JW names like it: ['MX Player=mxp']",
+  "FlixPatrol mx-player HTTP 403",
+  "JW arrivals: no series in combined feed, retrying with SHOW only. types: {'MOVIE': 124, 'SHOW_SEASON': 101}",
+  "JW arrivals ['mxp'] movie: 542 titles in 90 days",
+  "JW arrivals ['mxp'] movie: not found on TMDB (5): ['Nootokka Zillala Andagaadu', 'Rajannana Maga', 'Kireeta', 'Rajannana Maga', 'Kireeta']",
+  "JW arrivals ['mxp'] series: 180 titles in 90 days",
+  "JW arrivals ['mxp'] series: not found on TMDB (16): ['Season 1', 'Series 6', 'Miniseries', 'Season 1', 'Castle In The Time - Season 1', 'Thousand-Year Blood War', 'Series 2', 'Season 1']",
+  "MX Player : FlixPatrol data not available",
   "JW top MX Player movie: ['Jailer', 'Drishyam 2', 'Adipurush', 'Radhe Shyam', 'B.A. Pass', 'Pushpa: The Rise', 'Jawaani Jaaneman', 'Viruman', 'Madaari', 'Agent Sai Srinivasa Athreya']",
   "MX Player : FlixPatrol data not available",
   "JW top MX Player series: ['Campus Diaries', 'Broken But Beautiful', 'Jujutsu Kaisen', 'Kimetsu no Yaiba', 'Tadap', 'Aashram', 'Classroom of the Elite', 'Bleach', 'Deo keitu', 'Bhaukaal']",
@@ -216,109 +271,21 @@
   "Apple TV+ | JW used: ['atp'] | TMDB ids: ['350'] | JW names like it: ['Apple TV=atp', 'Apple TV Store=itu', 'MLS on Apple TV=mls', 'Lionsgate Play Apple TV Channel=lpa']",
   "FlixPatrol apple-tv HTTP 403",
   "JW arrivals: no series in combined feed, retrying with SHOW only. types: {'MOVIE': 139, 'SHOW_SEASON': 119}",
-  "JW arrivals SHOW day failed 2026-08-11 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-08-10 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-08-09 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-08-08 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-08-07 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-08-06 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-08-05 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-08-04 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-08-03 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-08-02 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-08-01 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-07-31 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals ['atp'] movie: 15 titles in 120 days",
-  "JW arrivals ['atp'] series: 23 titles in 120 days",
+  "JW arrivals ['atp'] movie: 16 titles in 120 days",
+  "JW arrivals ['atp'] series: 25 titles in 120 days",
   "JW arrivals ['atp'] series: not found on TMDB (13): ['Season 1', 'Season 1', 'Season 1', 'Season 1', 'Season 1', 'Season 1', 'Season 6', 'Season 1']",
   "Apple TV+ : FlixPatrol data not available",
-  "Apple TV+ movie from_jw failed: 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW top Apple TV+ movie: ['Tenzing', 'F1', 'Matchbox the Movie', 'Mayday', 'The Gorge', 'Way of the Warrior Kid', 'Being Heumann', 'A Charlie Brown Christmas', 'Tetris', 'The Family Plan']",
   "Apple TV+ : FlixPatrol data not available",
-  "Apple TV+ series from_jw failed: 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW top Apple TV+ series: ['12 12 12', 'Nocturne', 'Silo', 'Slow Horses', 'Monarch: Legacy of Monsters', 'Ted Lasso', \"Widow's Bay\", 'Dark Matter', 'Stick', 'Small Prophets']",
   "Hoichoi | JW used: ['hoc'] | TMDB ids: ['315'] | JW names like it: ['Hoichoi=hoc']",
-  "JW arrivals day failed 2026-11-28 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-11-25 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-11-26 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-11-27 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-25 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-24 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-27 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-26 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-23 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-22 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-20 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-21 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-19 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-18 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-16 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-17 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-15 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-14 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-13 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-12 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-11 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-10 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-08 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-09 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-07 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-06 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-05 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-04 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-03 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-02 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-01 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-30 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-29 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-28 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-27 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-26 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-25 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-24 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-22 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-23 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-21 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-20 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-18 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-19 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-17 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-16 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-15 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-14 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-13 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-12 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-11 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-10 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-09 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-08 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-07 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-06 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-05 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-04 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-03 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-02 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-01 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-08-31 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-08-30 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-08-29 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-08-28 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-08-27 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-08-26 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-08-25 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-08-24 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-08-23 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-08-22 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-08-21 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-08-20 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-08-19 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-08-18 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-08-17 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-08-16 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-08-15 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-08-14 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-08-13 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-08-12 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-08-10 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-08-11 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-10 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-08-09 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-08-08 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-08-07 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
