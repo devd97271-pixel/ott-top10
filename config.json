@@ -3,7 +3,7 @@
  "country_name": "India",
  "bms_city": "mumbai",
  "since": "2026-10-01",
- "new_limit": 150,
+ "new_limit": 20,
  "new_pages": 15,
  "cinema_limit": 60,
  "catalog_version": "2",
@@ -53,7 +53,7 @@
     "crunchyroll"
    ],
    "top_source": "justwatch",
-   "new_days": 45
+   "new_days": 60
   },
   {
    "name": "MX Player",
@@ -74,7 +74,7 @@
     "sony-liv",
     "sonyliv"
    ],
-   "new_days": 60
+   "new_days": 90
   },
   {
    "name": "Zee5",
@@ -94,7 +94,7 @@
     "apple-tv"
    ],
    "top_source": "flixpatrol",
-   "new_days": 90,
+   "new_days": 120,
    "jw_packages": [
     "atp"
    ],
@@ -108,10 +108,11 @@
     "hoichoi"
    ],
    "top_source": "justwatch",
-   "new_days": 90,
+   "new_days": 120,
    "strict_top": true
   }
  ],
- "arrival_days": 30,
- "cinema_now_days": 30
+ "arrival_days": 60,
+ "cinema_now_days": 30,
+ "new_max": 100
 }
