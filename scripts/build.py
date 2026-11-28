@@ -7,6 +7,7 @@ New releases: JustWatch -> TMDB. Cinema: BookMyShow -> TMDB.
 """
 import colorsys
 import csv
+import hashlib
 import datetime as dt
 import html as htmllib
 import io
@@ -1200,26 +1201,42 @@ def provider_logo(path):
     return LOGO_CACHE[path]
 
 
+def placeholder_base():
+    """Dark gradient used when a title has no TMDB image, so the card still shows (rank, title, platform)."""
+    im = Image.new("RGB", (640, 360))
+    d = ImageDraw.Draw(im)
+    for y in range(360):
+        k = y / 359
+        d.line([(0, y), (640, y)], fill=(int(46 - 26 * k), int(44 - 26 * k), int(64 - 36 * k)))
+    return im
+
+
 def make_poster(rec, rank, dest, prov, mode, tag):
-    last = None
-    for _ in range(3):
-        try:
-            r = S.get(rec["img"], timeout=30)
-            r.raise_for_status()
-            base = Image.open(io.BytesIO(r.content))
-            base.load()
-            break
-        except Exception as e:
-            last = e
-            time.sleep(1.5)
+    if not rec.get("img"):
+        base = placeholder_base()
     else:
-        raise last
+        last = None
+        for _ in range(3):
+            try:
+                r = S.get(rec["img"], timeout=30)
+                r.raise_for_status()
+                base = Image.open(io.BytesIO(r.content))
+                base.load()
+                break
+            except Exception as e:
+                last = e
+                time.sleep(1.5)
+        else:
+            raise last
     logo = provider_logo(prov.get("logo")) if prov else None
     if mode == "top10":
         im = render_poster(base, rec, rank, prov, logo)
     else:
         im = render_info(base, rec, prov, logo, tag, weekday=(mode == "cinema"))
-    im.save(dest, "JPEG", quality=84)# ---------------------------------------------------------------- Catalog building
+    im.save(dest, "JPEG", quality=84)
+    if dest.stat().st_size < 3000:
+        dest.unlink()
+        raise RuntimeError("poster file too small")# ---------------------------------------------------------------- Catalog building
 def arrival_date(tk, tid):
     try:
         return dt.date.fromisoformat(ARR_DATES.get((tk, tid)) or "")
@@ -1249,9 +1266,15 @@ def build_catalog(catid, name, kind, ids, mode, prov, src, tag=None):
         if mode == "top10" and rank >= TOP_N:
             break
         try:
-            rec = details(tkind, tid)
-            if not rec["img"]:
-                continue
+            spec = tid if isinstance(tid, dict) else None
+            if spec:                      # JustWatch title with no TMDB match: card with title text only
+                yr = str(spec.get("year") or "")
+                rec = {"title": spec["title"], "title_text": spec["title"], "logo": None, "year": yr, "yrange": yr,
+                       "genre": "", "imdb": spec.get("imdb"), "rating": 0, "date": "", "cert": "", "img": None}
+                key = slugify(spec["title"])[:40] or "x"
+            else:
+                rec = details(tkind, tid)
+                key = tid
             n = rank + 1
             rv, tag_i = dict(rec), tag
             if mode == "new":
@@ -1260,20 +1283,26 @@ def build_catalog(catid, name, kind, ids, mode, prov, src, tag=None):
                     rv["date"] = str(d)
                     if tkind == "tv" and (rec.get("season") or 1) > 1 and rec.get("season_date") == str(d):
                         tag_i = f"NEW SEASON {rec['season']}"
-            fname = f"{catid}-{n}-{tid}.jpg" if mode == "top10" else f"{catid}-{tid}.jpg"
-            make_poster(rv, n, POSTERS / fname, prov, mode, tag_i)
+            fname = f"{catid}-{n}-{key}.jpg" if mode == "top10" else f"{catid}-{key}.jpg"
+            show = {k: rv.get(k) for k in ("title_text", "logo", "genre", "yrange", "year", "date", "rating", "cert", "img")}
+            sig = hashlib.md5(json.dumps([POSTER_VER, show, n, mode, tag_i, (prov or {}).get("name")],
+                                         sort_keys=True, default=str).encode()).hexdigest()[:12]
+            if not ((POSTERS / fname).exists() and CACHE.get(f"ps:{fname}") == sig):
+                make_poster(rv, n, POSTERS / fname, prov, mode, tag_i)
+                CACHE[f"ps:{fname}"] = sig
             rank = n
             WRITTEN.add(("posters", fname))
             nice_date = fmt_date(rv.get("date")).title()
             desc = " | ".join(x for x in (f"Release: {nice_date}" if nice_date else "",
                                           f"Age rating: {rec['cert']}" if rec.get("cert") else "") if x)
-            mid = rec["imdb"] or f"tmdb:{tid}"
-            META_TODO[(kind, mid)] = (tkind, tid, rec["imdb"])
+            mid = rec["imdb"] or (f"tmdb:{tid}" if spec is None else f"jw:{key}")
+            if spec is None:
+                META_TODO[(kind, mid)] = (tkind, tid, rec["imdb"])
             metas.append({
                 "id": mid,
                 "type": kind,
                 "name": rec["title"],
-                "poster": f"{BASE}/posters/{fname}?v={tid}-{POSTER_VER}-{int(time.time()) // 86400}",
+                "poster": f"{BASE}/posters/{fname}?v={sig}",
                 "posterShape": "landscape",
                 "releaseInfo": nice_date if mode == "cinema" and nice_date else rec["year"],
                 "genres": [rec["genre"]] if rec["genre"] else [],
@@ -1444,7 +1473,21 @@ def top_ids(plat, kind, tudum, flix, jw_short, tm_ids):
         if jw_short:
             raw = jw_popular(jw_short, kind, first=40)
             note(f"JW top {name} {kind}:", [i.get("title") for i in raw[:10]])
-            add(resolve_many(kind, raw, limit=TOP_POOL), "justwatch-top")
+            if mode == "justwatch":
+                # exactly JustWatch's top TOP_N, in its order; a title TMDB does not know still gets a card
+                specs, nomatch = [], []
+                for it in raw[:TOP_N]:
+                    got = resolve_many(kind, [it], limit=1)
+                    if got:
+                        specs.append(got[0])
+                    elif it.get("title"):
+                        specs.append({"title": it["title"], "year": it.get("year"), "imdb": it.get("imdb")})
+                        nomatch.append(it["title"])
+                if nomatch:
+                    note(f"JW top {name} {kind}: no TMDB match (title-only card):", nomatch)
+                add(specs, "justwatch-top")
+            else:
+                add(resolve_many(kind, raw, limit=TOP_POOL), "justwatch-top")
         else:
             note(name, ": JustWatch package not found")
 
@@ -1721,6 +1764,8 @@ def main():
             if (sub, f.name) not in WRITTEN:
                 f.unlink()
 
+    for k in [k for k in CACHE if k.startswith("ps:") and ("posters", k[3:]) not in WRITTEN]:
+        del CACHE[k]
     CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
     CACHE_FILE.write_text(json.dumps(CACHE), encoding="utf-8")
     log("Done. Catalogs:", len(cats))
