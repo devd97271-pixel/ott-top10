@@ -1301,17 +1301,8 @@ def build_catalog(catid, name, kind, ids, mode, prov, src, tag=None):
                 d = arrival_date(tkind, tid) or eff_date(tkind, rec)   # date it came to this OTT
                 if d:
                     rv["date"] = str(d)
-                if tkind == "tv" and EP_LABEL.get((tkind, tid)):
-                    tag_i = EP_LABEL[(tkind, tid)]
-                elif tkind == "tv":
-                    try:
-                        sd = dt.date.fromisoformat((rec.get("season_date") or "")[:10])
-                    except ValueError:
-                        sd = None
-                    if (rec.get("season") or 1) > 1 and sd and 0 <= (TODAY - sd).days <= 120:
-                        tag_i = f"NEW SEASON {rec['season']}"
-                    else:
-                        tag_i = "NEW SHOW"
+                if tkind == "tv":
+                    tag_i = "NEW SHOW"      # only brand-new series are listed (no episodes / seasons)
             fname = f"{catid}-{n}-{key}.jpg" if mode == "top10" else f"{catid}-{key}.jpg"
             show = {k: rv.get(k) for k in ("title_text", "logo", "genre", "yrange", "year", "date", "rating", "cert", "img")}
             sig = hashlib.md5(json.dumps([POSTER_VER, show, n, mode, tag_i, (prov or {}).get("name")],
@@ -1559,52 +1550,49 @@ def prefetch(tk, ids):
         list(ex.map(one, todo))
 
 
-# ---------------------------------------------------------------- TV: new episodes / seasons (like JustWatch "TV Shows > New releases")
+# ---------------------------------------------------------------- TV: brand-new series only
 EP_LABEL = {}      # (tmdb kind, id) -> card tag, e.g. "NEW EPISODE S28"
 
 
-def tv_last_episode(tid):
-    ck = f"le1:{tid}"
+def tv_info(tid):
+    ck = f"tv2:{tid}"
     hit = CACHE.get(ck)
-    if hit and time.time() - hit["t"] < 3 * 3600:
+    if hit and time.time() - hit["t"] < 6 * 3600:
         return hit
     d = tmdb(f"/tv/{tid}", language="en-US")
-    last = d.get("last_episode_to_air") or {}
-    seasons = {x.get("season_number"): x.get("air_date") for x in d.get("seasons", [])}
-    rec = {"t": time.time(), "pop": d.get("popularity") or 0, "air": last.get("air_date"),
-           "s": last.get("season_number"), "e": last.get("episode_number"),
-           "season_start": seasons.get(last.get("season_number")), "nseasons": d.get("number_of_seasons") or 1}
+    rec = {"t": time.time(), "pop": d.get("popularity") or 0, "first": d.get("first_air_date")}
     CACHE[ck] = rec
     return rec
 
 
 def tv_recent(jw_short, tm_ids):
-    """Shows that got a new episode / season / are brand new on this platform in the last days.
-    Pool = TMDB shows on the platform with a recent air date + JustWatch's popular shows for the platform."""
-    days = min(int(WIN["days"]), 45)
-    start = TODAY - dt.timedelta(days=days)
+    """Brand-new TV series only (no new episodes, no new seasons): shows whose first episode aired
+    within the window and that are on this platform. Date = premiere date."""
+    start = TODAY - dt.timedelta(days=int(WIN["days"]))
     pool = []
     if tm_ids:
         for page in (1, 2, 3):
             try:
                 res = tmdb("/discover/tv", watch_region=COUNTRY, with_watch_providers="|".join(tm_ids),
                            with_watch_monetization_types="flatrate|free|ads", sort_by="popularity.desc",
-                           language="en-US", page=page, **{"air_date.gte": str(start), "air_date.lte": str(TODAY)})
+                           language="en-US", page=page,
+                           **{"first_air_date.gte": str(start), "first_air_date.lte": str(TODAY)})
             except Exception as e:
-                note("TMDB tv new episodes failed:", str(e)[:120])
+                note("TMDB new series failed:", str(e)[:120])
                 break
             pool += [r["id"] for r in res.get("results", [])]
     if jw_short:
         try:
-            pool += resolve_many("series", jw_popular(jw_short, "series", first=100), limit=120)
+            raw = jw_recent(jw_short, "series", start.year, pages=3)
+            pool += resolve_many("series", raw, limit=150)
         except Exception as e:
-            note("JW popular shows failed:", str(e)[:120])
+            note("JW recent shows failed:", str(e)[:120])
     pool = list(dict.fromkeys(pool))
     infos = {}
 
     def one(t):
         try:
-            infos[t] = tv_last_episode(t)
+            infos[t] = tv_info(t)
         except Exception:
             pass
 
@@ -1613,27 +1601,14 @@ def tv_recent(jw_short, tm_ids):
     out = []
     for t in pool:
         i = infos.get(t)
-        if not i or not i.get("air"):
-            continue
         try:
-            la = dt.date.fromisoformat(i["air"][:10])
-        except ValueError:
+            fd = dt.date.fromisoformat((i or {}).get("first", "")[:10])
+        except (ValueError, TypeError):
             continue
-        if not (start <= la <= TODAY):
-            continue
-        sn, ep = i.get("s") or 1, i.get("e") or 1
-        try:
-            ss = dt.date.fromisoformat((i.get("season_start") or "")[:10])
-        except ValueError:
-            ss = None
-        if ss and (la - ss).days <= 3:          # the season started with/near this episode
-            label = "NEW SHOW" if sn == 1 else f"NEW SEASON {sn}"
-        else:
-            label = f"NEW EPISODE S{sn}"
-        out.append((la, i.get("pop") or 0, t, label))
+        if start <= fd <= TODAY:
+            out.append((fd, i.get("pop") or 0, t, "NEW SHOW"))
     out.sort(key=lambda x: (x[0], x[1]), reverse=True)
     return out
-
 
 
 def cap_by_days(keep):
@@ -1706,7 +1681,7 @@ def new_ids(kind, tk, jw_short, tm_ids):
         if kind == "series":
             try:
                 eps = tv_recent(jw_short, tm_ids)
-                note(f"TV new episodes {jw_short}: {len(eps)} shows;", [(str(d)[5:], t, lb) for d, _, t, lb in eps[:6]])
+                note(f"TV new series {jw_short}: {len(eps)} shows;", [(str(d)[5:], t, lb) for d, _, t, lb in eps[:6]])
                 eids = []
                 for d, _, t, lb in eps:
                     EP_LABEL[(tk, t)] = lb
@@ -1717,9 +1692,9 @@ def new_ids(kind, tk, jw_short, tm_ids):
                 if eids:
                     ids = eids + [t for t in ids if t not in eids]
                     used_arrivals = True
-                    src.append("episodes")
+                    src.append("new-series")
             except Exception as e:
-                note("TV new episodes failed:", str(e)[:150])
+                note("TV new series failed:", str(e)[:150])
         if not used_arrivals:
             items = []
             try:
@@ -1747,7 +1722,13 @@ def new_ids(kind, tk, jw_short, tm_ids):
     keep = []
     for tid in ids:
         try:
-            d = arrival_date(tk, tid) or eff_date(tk, details(tk, tid))
+            rec = details(tk, tid)
+            if tk == "tv" and (tk, tid) not in EP_LABEL:
+                # JustWatch "added" titles: keep only shows that really premiered recently (new series)
+                fa = dt.date.fromisoformat((rec.get("date") or "")[:10])
+                if (TODAY - fa).days > max(int(WIN["days"]), 90):
+                    continue
+            d = arrival_date(tk, tid) or eff_date(tk, rec)
         except Exception:
             continue
         if d:
