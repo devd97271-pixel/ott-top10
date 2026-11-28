@@ -596,6 +596,26 @@ def jw_diag():
         note("JW introspection failed:", e)
 
 
+def jw_enum_diag():
+    """Once per run: which object types does JustWatch have, and does a season-level feed exist?"""
+    if ARR_STATE.get("enum_diag"):
+        return
+    ARR_STATE["enum_diag"] = True
+    try:
+        d = jw_query('{ __type(name: "ObjectType") { enumValues { name } } }')
+        note("JW ObjectType values:", [e["name"] for e in d["__type"]["enumValues"]])
+    except Exception as e:
+        note("JW ObjectType introspection failed:", str(e)[:200])
+    var = ARR_STATE.get("variant")
+    if var:
+        for t in ("SHOW_SEASON", "SHOW_EPISODE"):
+            try:
+                items = _jw_day(["nfx"], TODAY - dt.timedelta(days=1), var, types=(t,))
+                note(f"JW probe {t}: {len(items)} items", [(i.get("title"), i.get("otype")) for i in items[:4]])
+            except Exception as e:
+                note(f"JW probe {t} failed:", str(e)[:200])
+
+
 def _jw_day(pkgs, day, variant, types=("MOVIE", "SHOW")):
     flt = {"packages": pkgs, "objectTypes": list(types)}
     out, after = [], None
@@ -1278,11 +1298,18 @@ def build_catalog(catid, name, kind, ids, mode, prov, src, tag=None):
             n = rank + 1
             rv, tag_i = dict(rec), tag
             if mode == "new":
-                d = eff_date(tkind, rec) or arrival_date(tkind, tid)
+                d = arrival_date(tkind, tid) or eff_date(tkind, rec)   # date it came to this OTT
                 if d:
                     rv["date"] = str(d)
-                    if tkind == "tv" and (rec.get("season") or 1) > 1 and rec.get("season_date") == str(d):
+                if tkind == "tv":
+                    try:
+                        sd = dt.date.fromisoformat((rec.get("season_date") or "")[:10])
+                    except ValueError:
+                        sd = None
+                    if (rec.get("season") or 1) > 1 and sd and 0 <= (TODAY - sd).days <= 120:
                         tag_i = f"NEW SEASON {rec['season']}"
+                    else:
+                        tag_i = "NEW SHOW"
             fname = f"{catid}-{n}-{key}.jpg" if mode == "top10" else f"{catid}-{key}.jpg"
             show = {k: rv.get(k) for k in ("title_text", "logo", "genre", "yrange", "year", "date", "rating", "cert", "img")}
             sig = hashlib.md5(json.dumps([POSTER_VER, show, n, mode, tag_i, (prov or {}).get("name")],
@@ -1562,6 +1589,10 @@ def new_ids(kind, tk, jw_short, tm_ids):
             arr = [i for i in jw_arrivals(jw_short) if i["kind"] == kind]
             arr.sort(key=lambda i: i["date"], reverse=True)          # newest day first, JustWatch order inside a day
             note(f"JW arrivals {jw_short} {kind}: {len(arr)} titles in {WIN['days']} days")
+            if kind == "series":
+                note(f"JW arrivals {jw_short} series raw:", [(i.get("title"), i["date"][5:], i.get("otype")) for i in arr[:8]])
+                if len(arr) < 5:
+                    jw_enum_diag()
             if arr:
                 used_arrivals = True
                 bydate, order = {}, []
