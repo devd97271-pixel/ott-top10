@@ -1697,7 +1697,7 @@ def main():
     if not cats:
         sys.exit("No catalogs produced; keeping old files")
 
-write_all_meta()
+    write_all_meta()
     (OUT / ".nojekyll").write_text("", encoding="utf-8")
 
     manifest = {
@@ -1728,4 +1728,3 @@ write_all_meta()
 
 if __name__ == "__main__":
     main()
-    
