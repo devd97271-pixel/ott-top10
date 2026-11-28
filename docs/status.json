@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-28 21:08 IST",
+ "updated": "2026-11-28 21:32 IST",
  "catalogs": {
   "in2-cinema-now": {
    "name": "Now Showing in Cinema",
@@ -18,7 +18,7 @@
   },
   "in2-netflix-new-series": {
    "name": "Netflix New Release",
-   "source": "justwatch-new+episodes",
+   "source": "justwatch-new+new-series",
    "items": 20
   },
   "in2-netflix-top-movie": {
@@ -38,7 +38,7 @@
   },
   "in2-prime-video-new-series": {
    "name": "Prime Video New Release",
-   "source": "justwatch-new+episodes",
+   "source": "justwatch-new+new-series",
    "items": 20
   },
   "in2-prime-video-top-movie": {
@@ -58,7 +58,7 @@
   },
   "in2-jiohotstar-new-series": {
    "name": "JioHotstar New Release",
-   "source": "justwatch-new+episodes",
+   "source": "justwatch-new+new-series",
    "items": 20
   },
   "in2-jiohotstar-top-movie": {
@@ -78,7 +78,7 @@
   },
   "in2-crunchyroll-new-series": {
    "name": "Crunchyroll New Release",
-   "source": "justwatch-new+episodes",
+   "source": "justwatch-new+new-series",
    "items": 20
   },
   "in2-crunchyroll-top-movie": {
@@ -98,8 +98,8 @@
   },
   "in2-mx-player-new-series": {
    "name": "MX Player New Release",
-   "source": "justwatch-new+episodes",
-   "items": 20
+   "source": "justwatch-new+new-series",
+   "items": 1
   },
   "in2-mx-player-top-movie": {
    "name": "MX Player Top 10",
@@ -118,8 +118,8 @@
   },
   "in2-sonyliv-new-series": {
    "name": "SonyLIV New Release",
-   "source": "justwatch-new+episodes",
-   "items": 20
+   "source": "justwatch-new+new-series",
+   "items": 7
   },
   "in2-sonyliv-top-movie": {
    "name": "SonyLIV Top 10",
@@ -138,8 +138,8 @@
   },
   "in2-zee5-new-series": {
    "name": "Zee5 New Release",
-   "source": "justwatch-new+episodes",
-   "items": 20
+   "source": "justwatch-new+new-series",
+   "items": 6
   },
   "in2-zee5-top-movie": {
    "name": "Zee5 Top 10",
@@ -158,8 +158,8 @@
   },
   "in2-apple-tv-new-series": {
    "name": "Apple TV+ New Release",
-   "source": "justwatch-new+episodes",
-   "items": 14
+   "source": "justwatch-new+new-series",
+   "items": 7
   },
   "in2-apple-tv-top-movie": {
    "name": "Apple TV+ Top 10",
@@ -173,7 +173,7 @@
   },
   "in2-hoichoi-new-series": {
    "name": "Hoichoi New Release",
-   "source": "episodes",
+   "source": "new-series",
    "items": 1
   },
   "in2-hoichoi-top-movie": {
@@ -199,7 +199,7 @@
   "JW arrivals ['nfx'] series: 208 titles in 60 days",
   "JW arrivals ['nfx'] series raw: [('Season 28', '11-28', 'SHOW_SEASON'), ('Season 1', '11-28', 'SHOW_SEASON'), ('Season 1', '11-28', 'SHOW_SEASON'), ('Season 1', '11-27', 'SHOW_SEASON'), ('Season 1', '11-27', 'SHOW_SEASON'), ('Season 2', '11-27', 'SHOW_SEASON'), ('Nikko Kegon Falls Arc', '11-27', 'SHOW_SEASON'), ('2nd-3rd STAGE', '11-27', 'SHOW_SEASON')]",
   "JW arrivals ['nfx'] series: not found on TMDB (81): ['Season 28', 'Season 1', 'Season 1', 'Season 1', 'Season 1', 'Nikko Kegon Falls Arc', '2nd-3rd STAGE', 'Season 1']",
-  "TV new episodes ['nfx']: 68 shows; [('11-27', 45790, 'NEW EPISODE S6'), ('11-27', 220542, 'NEW EPISODE S1'), ('11-27', 1549, 'NEW EPISODE S28'), ('11-27', 226688, 'NEW EPISODE S1'), ('11-27', 253811, 'NEW EPISODE S2'), ('11-27', 256711, 'NEW EPISODE S2')]",
+  "TV new series ['nfx']: 64 shows; [('11-28', 341600, 'NEW SHOW'), ('11-26', 326247, 'NEW SHOW'), ('11-26', 338930, 'NEW SHOW'), ('11-26', 302837, 'NEW SHOW'), ('11-26', 313701, 'NEW SHOW'), ('11-23', 340615, 'NEW SHOW')]",
   "Netflix : FlixPatrol data not available",
   "JW top Netflix movie: ['365 dni', 'Spider-Man: Brand New Day', 'Drishyam: The Conclusion', 'Baththa', 'Ranabaali', 'Pradhama Drishtiya Kuttakkar', 'Dorothy', '418', 'Vishwanath & Sons', 'Daayra']",
   "Tudum series: approx match for Akka: The Protectors",
@@ -213,7 +213,7 @@
   "JW arrivals ['prv'] series: 367 titles in 60 days",
   "JW arrivals ['prv'] series raw: [('Season 1', '11-28', 'SHOW_SEASON'), ('Season 2', '11-28', 'SHOW_SEASON'), ('Season 1', '11-28', 'SHOW_SEASON'), ('Season 1', '11-27', 'SHOW_SEASON'), ('Season 1', '11-27', 'SHOW_SEASON'), ('Season 1', '11-26', 'SHOW_SEASON'), ('Season 3', '11-25', 'SHOW_SEASON'), ('Miniseries', '11-25', 'SHOW_SEASON')]",
   "JW arrivals ['prv'] series: not found on TMDB (65): ['Season 1', 'Season 1', 'Season 1', 'Season 1', 'Season 1', 'Season 3', 'Season 1', 'Season 4']",
-  "TV new episodes ['prv']: 50 shows; [('11-27', 328010, 'NEW EPISODE S1'), ('11-27', 94667, 'NEW EPISODE S6'), ('11-27', 341492, 'NEW SHOW'), ('11-27', 300397, 'NEW SEASON 2'), ('11-26', 310209, 'NEW SHOW'), ('11-24', 84773, 'NEW EPISODE S3')]",
+  "TV new series ['prv']: 27 shows; [('11-27', 341492, 'NEW SHOW'), ('11-25', 310209, 'NEW SHOW'), ('11-24', 171802, 'NEW SHOW'), ('11-20', 314131, 'NEW SHOW'), ('11-20', 338549, 'NEW SHOW'), ('11-20', 342696, 'NEW SHOW')]",
   "Prime Video : FlixPatrol data not available",
   "JW top Prime Video movie: ['Jailer 2', 'Mirzapur: The Movie', 'The Vvaan: Force of the Forrest', 'How to Have Sex', 'Premada Oorali', 'Drishyam 3', 'Jailer', 'Vibe', 'Drive - The Pretenders', 'Dune']",
   "Prime Video : FlixPatrol data not available",
@@ -226,7 +226,7 @@
   "JW arrivals ['jhs'] series: 411 titles in 60 days",
   "JW arrivals ['jhs'] series raw: [('Season 4', '11-28', 'SHOW_SEASON'), ('Season 4', '11-28', 'SHOW_SEASON'), ('Season 1', '11-28', 'SHOW_SEASON'), ('Season-1', '11-28', 'SHOW_SEASON'), ('Season 1', '11-28', 'SHOW_SEASON'), ('Season 1', '11-28', 'SHOW_SEASON'), ('Season 3', '11-27', 'SHOW_SEASON'), ('Season 1', '11-27', 'SHOW_SEASON')]",
   "JW arrivals ['jhs'] series: not found on TMDB (169): ['Season 4', 'Season 4', 'Season 1', 'Season-1', 'Season 3', 'Season 1', 'Season 8', 'Season 12']",
-  "TV new episodes ['jhs']: 72 shows; [('11-27', 153312, 'NEW EPISODE S4'), ('11-27', 387, 'NEW SEASON 18'), ('11-27', 45790, 'NEW EPISODE S6'), ('11-27', 103540, 'NEW EPISODE S3'), ('11-27', 126824, 'NEW EPISODE S6'), ('11-27', 116479, 'NEW EPISODE S1')]",
+  "TV new series ['jhs']: 32 shows; [('11-27', 342384, 'NEW SHOW'), ('11-24', 340836, 'NEW SHOW'), ('11-23', 290826, 'NEW SHOW'), ('11-22', 341164, 'NEW SHOW'), ('11-18', 338502, 'NEW SHOW'), ('11-17', 339503, 'NEW SHOW')]",
   "JioHotstar : FlixPatrol data not available",
   "JW top JioHotstar movie: ['Obsession', 'How to Have Sex', \"I'm Game\", 'Avengers Endgame: Encore', 'Tell Me What You Want', 'Gunche', 'Bethlehem Kudumba Unit', 'Mayookha', 'Together', 'Dhurandhar: The Revenge']",
   "item failed in2-jiohotstar-top-movie 1786842 404 Client Error: Not Found for url: https://api.themoviedb.org/3/movie/1786842?append_to_response=external_ids%2Crelease_dates%2Cimages&language=en-US&include_image_language=en%2Cnull%2Chi%2Cbn%2Cta%2Cte%2Cml%2Ckn%2Cmr%2Cpa%2Cgu%2Cur%2Cor%2Cas%2Cko%2Cja%2Czh%2Cth%2Cid%2Ces%2Cfr%2Cde%2Cit%2Cpt%2Cru%2Ctr%2Car&api_key=3b419ee12410b5f6e71cc6e2e8e2ddc4",
@@ -235,12 +235,10 @@
   "Crunchyroll | JW used: ['cru'] | TMDB ids: ['283'] | JW names like it: ['Crunchyroll=cru']",
   "JW arrivals: no series in combined feed, retrying with SHOW only. types: {'MOVIE': 128, 'SHOW_SEASON': 65}",
   "JW arrivals ['cru'] movie: 32 titles in 60 days",
-  "item failed in2-crunchyroll-new-movie 635838 404 Client Error: Not Found for url: https://api.themoviedb.org/3/movie/635838?append_to_response=external_ids%2Crelease_dates%2Cimages&language=en-US&include_image_language=en%2Cnull%2Chi%2Cbn%2Cta%2Cte%2Cml%2Ckn%2Cmr%2Cpa%2Cgu%2Cur%2Cor%2Cas%2Cko%2Cja%2Czh%2Cth%2Cid%2Ces%2Cfr%2Cde%2Cit%2Cpt%2Cru%2Ctr%2Car&api_key=3b419ee12410b5f6e71cc6e2e8e2ddc4",
-  "item failed in2-crunchyroll-new-movie 1746478 404 Client Error: Not Found for url: https://api.themoviedb.org/3/movie/1746478?append_to_response=external_ids%2Crelease_dates%2Cimages&language=en-US&include_image_language=en%2Cnull%2Chi%2Cbn%2Cta%2Cte%2Cml%2Ckn%2Cmr%2Cpa%2Cgu%2Cur%2Cor%2Cas%2Cko%2Cja%2Czh%2Cth%2Cid%2Ces%2Cfr%2Cde%2Cit%2Cpt%2Cru%2Ctr%2Car&api_key=3b419ee12410b5f6e71cc6e2e8e2ddc4",
   "JW arrivals ['cru'] series: 456 titles in 60 days",
   "JW arrivals ['cru'] series raw: [('Firefly Wedding', '11-28', 'SHOW_SEASON'), ('Season 1', '11-28', 'SHOW_SEASON'), ('Terraformars - Season 1', '11-28', 'SHOW_SEASON'), ('Season 2', '11-28', 'SHOW_SEASON'), ('Season 1', '11-27', 'SHOW_SEASON'), ('Nikko Kegon Falls Arc', '11-27', 'SHOW_SEASON'), ('Season 1', '11-27', 'SHOW_SEASON'), ('The Iceblade Sorcerer Shall Rule the World II', '11-27', 'SHOW_S",
   "JW arrivals ['cru'] series: not found on TMDB (65): ['Season 1', 'Terraformars - Season 1', 'Season 1', 'Nikko Kegon Falls Arc', 'Season 1', 'The Iceblade Sorcerer Shall Rule the World II', 'Season 1', 'Stardust Crusaders']",
-  "TV new episodes ['cru']: 50 shows; [('11-27', 45790, 'NEW EPISODE S6'), ('11-27', 220542, 'NEW EPISODE S1'), ('11-27', 320909, 'NEW EPISODE S1'), ('11-27', 253811, 'NEW EPISODE S2'), ('11-27', 324502, 'NEW EPISODE S1'), ('11-27', 270603, 'NEW EPISODE S1')]",
+  "TV new series ['cru']: 27 shows; [('10-17', 204084, 'NEW SHOW'), ('10-14', 306565, 'NEW SHOW'), ('10-11', 312359, 'NEW SHOW'), ('10-11', 288588, 'NEW SHOW'), ('10-10', 295420, 'NEW SHOW'), ('10-10', 307903, 'NEW SHOW')]",
   "JW top Crunchyroll movie: ['Demon Slayer: Kimetsu no Yaiba Infinity Castle', 'Your Name.', 'Chainsaw Man - The Movie: Reze Arc', 'Friday the 13th: The Final Chapter', 'Jujutsu Kaisen 0', 'A Silent Voice: The Movie', 'Suzume', 'Weathering with You', 'The Garden of Words', 'In This Corner of the World']",
   "JW top Crunchyroll series: ['Black Clover', 'Tôkyô Ribenjâzu', 'Naruto: Shippûden', 'One Piece', 'Jujutsu Kaisen', 'Kimetsu no Yaiba', 'Naruto', 'Kusuriya no hitorigoto', 'Dragon Ball Super: Beerus', 'Classroom of the Elite']",
   "MX Player | JW used: ['mxp'] | TMDB ids: ['515', '1898'] | JW names like it: ['MX Player=mxp']",
@@ -251,7 +249,7 @@
   "JW arrivals ['mxp'] series: 180 titles in 90 days",
   "JW arrivals ['mxp'] series raw: [('Season 1', '11-21', 'SHOW_SEASON'), ('Season 1', '11-21', 'SHOW_SEASON'), ('Season 1', '11-21', 'SHOW_SEASON'), ('Season-2', '11-21', 'SHOW_SEASON'), ('HUNTER X HUNTER', '11-21', 'SHOW_SEASON'), ('Assassination Classroom', '11-21', 'SHOW_SEASON'), ('Season 1', '11-21', 'SHOW_SEASON'), ('Season 1', '11-21', 'SHOW_SEASON')]",
   "JW arrivals ['mxp'] series: not found on TMDB (16): ['Season 1', 'Series 6', 'Miniseries', 'Season 1', 'Castle In The Time - Season 1', 'Thousand-Year Blood War', 'Series 2', 'Season 1']",
-  "TV new episodes ['mxp']: 8 shows; [('11-27', 306118, 'NEW EPISODE S2'), ('11-27', 8630, 'NEW EPISODE S1'), ('11-25', 208878, 'NEW EPISODE S3'), ('11-21', 106449, 'NEW EPISODE S1'), ('11-18', 155056, 'NEW SEASON 2'), ('11-06', 300081, 'NEW EPISODE S2')]",
+  "TV new series ['mxp']: 1 shows; [('10-22', 339517, 'NEW SHOW')]",
   "MX Player : FlixPatrol data not available",
   "JW top MX Player movie: ['Jailer', 'Drishyam 2', 'Adipurush', 'Radhe Shyam', 'B.A. Pass', 'Pushpa: The Rise', 'Jawaani Jaaneman', 'Viruman', 'Madaari', 'Agent Sai Srinivasa Athreya']",
   "MX Player : FlixPatrol data not available",
@@ -264,7 +262,7 @@
   "JW arrivals ['snl'] series: 83 titles in 90 days",
   "JW arrivals ['snl'] series raw: [('KBC 2026', '11-28', 'SHOW_SEASON'), ('Season 1', '11-28', 'SHOW_SEASON'), ('Season 1', '11-27', 'SHOW_SEASON'), ('チョーズン： 選択の行方 Season1 (字幕版)', '11-26', 'SHOW_SEASON'), ('Season 2', '11-26', 'SHOW_SEASON'), ('Season 1', '11-26', 'SHOW_SEASON'), ('Ninja Flash', '11-26', 'SHOW_SEASON'), ('Season 3', '11-26', 'SHOW_SEASON')]",
   "JW arrivals ['snl'] series: not found on TMDB (27): ['KBC 2026', 'Season 1', 'Season 3', 'Season 1', 'Season 3', 'Season 1', 'Season 1', 'Season 1']",
-  "TV new episodes ['snl']: 23 shows; [('11-27', 45790, 'NEW EPISODE S6'), ('11-27', 220542, 'NEW EPISODE S1'), ('11-27', 203769, 'NEW EPISODE S1'), ('11-27', 911, 'NEW EPISODE S18'), ('11-27', 200777, 'NEW EPISODE S2'), ('11-27', 338656, 'NEW EPISODE S1')]",
+  "TV new series ['snl']: 7 shows; [('11-23', 339004, 'NEW SHOW'), ('11-18', 338656, 'NEW SHOW'), ('10-24', 338687, 'NEW SHOW'), ('10-19', 338683, 'NEW SHOW'), ('10-19', 339213, 'NEW SHOW'), ('10-03', 337354, 'NEW SHOW')]",
   "SonyLIV : FlixPatrol data not available",
   "JW top SonyLIV movie: ['Hanuman Ansh', 'Parivarik ManuRanjan', 'Immortal', 'Anbil Avan', 'DC', 'Backrooms', 'Demon Slayer: Kimetsu no Yaiba Infinity Castle', 'Spider-Man: No Way Home', 'Meesaya Murukku 2', 'Maa Inti Bangaram']",
   "SonyLIV : FlixPatrol data not available",
@@ -277,7 +275,7 @@
   "JW arrivals ['zee'] series: 189 titles in 60 days",
   "JW arrivals ['zee'] series raw: [('Season 1', '11-28', 'SHOW_SEASON'), ('Season 1', '11-28', 'SHOW_SEASON'), ('Season 1', '11-28', 'SHOW_SEASON'), ('Season 1', '11-28', 'SHOW_SEASON'), ('Sarpa Sambandha', '11-28', 'SHOW_SEASON'), ('Season 1', '11-27', 'SHOW_SEASON'), ('Season 1', '11-27', 'SHOW_SEASON'), ('Season 1', '11-27', 'SHOW_SEASON')]",
   "JW arrivals ['zee'] series: not found on TMDB (38): ['Season 1', 'Sarpa Sambandha', 'Season 1', 'Sarpa Sambandha', 'Season 1', 'Season 1', 'Season 1', 'Season 1']",
-  "TV new episodes ['zee']: 13 shows; [('11-27', 216287, 'NEW EPISODE S1'), ('11-27', 342646, 'NEW EPISODE S1'), ('11-26', 83893, 'NEW EPISODE S17'), ('11-26', 137068, 'NEW EPISODE S1'), ('11-23', 295268, 'NEW EPISODE S1'), ('11-22', 335868, 'NEW EPISODE S1')]",
+  "TV new series ['zee']: 6 shows; [('11-27', 342403, 'NEW SHOW'), ('11-20', 342646, 'NEW SHOW'), ('10-30', 340453, 'NEW SHOW'), ('10-28', 340197, 'NEW SHOW'), ('10-11', 338123, 'NEW SHOW'), ('10-05', 337440, 'NEW SHOW')]",
   "Zee5 : FlixPatrol data not available",
   "JW top Zee5 movie: ['Spider-Man: Brand New Day', 'The Odyssey', 'Heart of the Beast', 'Resident Evil', 'The Invite', 'Jana Nayagan', 'Other Mommy', 'Disclosure Day', 'Last Man in Tower', 'Fifty Shades of Grey']",
   "Zee5 : FlixPatrol data not available",
@@ -289,7 +287,7 @@
   "JW arrivals ['atp'] series: 25 titles in 120 days",
   "JW arrivals ['atp'] series raw: [('Season 2', '11-25', 'SHOW_SEASON'), ('Season 1', '11-25', 'SHOW_SEASON'), ('Season 2', '11-25', 'SHOW_SEASON'), ('Season 1', '11-20', 'SHOW_SEASON'), ('Season 1', '11-20', 'SHOW_SEASON'), ('Season 1', '11-13', 'SHOW_SEASON'), ('Season 2', '11-06', 'SHOW_SEASON'), ('Season 1', '11-04', 'SHOW_SEASON')]",
   "JW arrivals ['atp'] series: not found on TMDB (13): ['Season 1', 'Season 1', 'Season 1', 'Season 1', 'Season 1', 'Season 1', 'Season 6', 'Season 1']",
-  "TV new episodes ['atp']: 9 shows; [('11-27', 306179, 'NEW EPISODE S1'), ('11-26', 292741, 'NEW EPISODE S1'), ('11-26', 254630, 'NEW EPISODE S1'), ('11-25', 234310, 'NEW EPISODE S2'), ('11-24', 248830, 'NEW EPISODE S2'), ('11-06', 291361, 'NEW EPISODE S2')]",
+  "TV new series ['atp']: 6 shows; [('11-12', 254630, 'NEW SHOW'), ('11-06', 306179, 'NEW SHOW'), ('10-29', 292741, 'NEW SHOW'), ('09-22', 250203, 'NEW SHOW'), ('09-09', 258230, 'NEW SHOW'), ('08-20', 294722, 'NEW SHOW')]",
   "Apple TV+ : FlixPatrol data not available",
   "JW top Apple TV+ movie: ['Tenzing', 'F1', 'Matchbox the Movie', 'Mayday', 'The Gorge', 'Way of the Warrior Kid', 'Being Heumann', 'A Charlie Brown Christmas', 'Tetris', 'The Family Plan']",
   "Apple TV+ : FlixPatrol data not available",
@@ -302,7 +300,7 @@
   "JW ObjectType introspection failed: 'NoneType' object is not subscriptable",
   "JW probe SHOW_SEASON: 7 items [('Season 1', 'SHOW_SEASON'), ('Season 1', 'SHOW_SEASON'), ('Season 2', 'SHOW_SEASON'), ('Nikko Kegon Falls Arc', 'SHOW_SEASON')]",
   "JW probe SHOW_EPISODE: 17 items [('Season 1', 'SHOW_SEASON'), ('Season 1', 'SHOW_SEASON'), ('Season 2', 'SHOW_SEASON'), ('Nikko Kegon Falls Arc', 'SHOW_SEASON')]",
-  "TV new episodes ['hoc']: 1 shows; [('10-15', 296721, 'NEW SEASON 2')]",
+  "TV new series ['hoc']: 1 shows; [('10-02', 337078, 'NEW SHOW')]",
   "JW top Hoichoi movie: ['Bibaho Diaries', 'Raincoat', 'Chaalchitro: The Frame Fatale', 'Vinci Da', 'The Eken: Benaras e Bibhishika', 'Habji Gabji', 'Chaamp', 'Shontaan', 'Trailer', 'Bagha Jatin']",
   "JW top Hoichoi series: ['Crime Of Desire', 'Mismatch', 'Mandaar', 'Bonyo Premer Golpo', 'Charitraheen', 'Birangana', 'Japani Toy', 'Hostel Days', 'Taranath Tantrik', 'Sampurna']",
   "item failed in2-hoichoi-top-series 111744 404 Client Error: Not Found for url: https://api.themoviedb.org/3/tv/111744?append_to_response=external_ids%2Ccontent_ratings%2Cimages&language=en-US&include_image_language=en%2Cnull%2Chi%2Cbn%2Cta%2Cte%2Cml%2Ckn%2Cmr%2Cpa%2Cgu%2Cur%2Cor%2Cas%2Cko%2Cja%2Czh%2Cth%2Cid%2Ces%2Cfr%2Cde%2Cit%2Cpt%2Cru%2Ctr%2Car&api_key=3b419ee12410b5f6e71cc6e2e8e2ddc4",
