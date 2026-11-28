@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-28 10:42 IST",
+ "updated": "2026-11-28 12:29 IST",
  "catalogs": {
   "in2-cinema-now": {
    "name": "Now Showing in Cinema",
@@ -13,13 +13,13 @@
   },
   "in2-netflix-new-movie": {
    "name": "Netflix New Release",
-   "source": "justwatch-new+justwatch+tmdb",
-   "items": 149
+   "source": "justwatch-new",
+   "items": 19
   },
   "in2-netflix-new-series": {
    "name": "Netflix New Release",
-   "source": "justwatch-new+justwatch+tmdb",
-   "items": 128
+   "source": "justwatch-new",
+   "items": 19
   },
   "in2-netflix-top-movie": {
    "name": "Netflix Top 10",
@@ -33,13 +33,13 @@
   },
   "in2-prime-video-new-movie": {
    "name": "Prime Video New Release",
-   "source": "justwatch-new+justwatch+tmdb",
-   "items": 149
+   "source": "justwatch-new",
+   "items": 47
   },
   "in2-prime-video-new-series": {
    "name": "Prime Video New Release",
-   "source": "justwatch-new+justwatch+tmdb",
-   "items": 101
+   "source": "justwatch-new",
+   "items": 16
   },
   "in2-prime-video-top-movie": {
    "name": "Prime Video Top 10",
@@ -53,13 +53,13 @@
   },
   "in2-jiohotstar-new-movie": {
    "name": "JioHotstar New Release",
-   "source": "justwatch-new+justwatch+tmdb",
-   "items": 130
+   "source": "justwatch-new",
+   "items": 24
   },
   "in2-jiohotstar-new-series": {
    "name": "JioHotstar New Release",
-   "source": "justwatch-new+justwatch+tmdb",
-   "items": 89
+   "source": "justwatch-new",
+   "items": 18
   },
   "in2-jiohotstar-top-movie": {
    "name": "JioHotstar Top 10",
@@ -74,12 +74,12 @@
   "in2-crunchyroll-new-movie": {
    "name": "Crunchyroll New Release",
    "source": "justwatch-new+tmdb",
-   "items": 8
+   "items": 14
   },
   "in2-crunchyroll-new-series": {
    "name": "Crunchyroll New Release",
-   "source": "justwatch-new+justwatch+tmdb",
-   "items": 97
+   "source": "justwatch-new",
+   "items": 18
   },
   "in2-crunchyroll-top-movie": {
    "name": "Crunchyroll Top 10",
@@ -93,13 +93,13 @@
   },
   "in2-mx-player-new-movie": {
    "name": "MX Player New Release",
-   "source": "justwatch-new+tmdb",
-   "items": 150
+   "source": "justwatch-new",
+   "items": 100
   },
   "in2-mx-player-new-series": {
    "name": "MX Player New Release",
-   "source": "justwatch-new+justwatch+tmdb",
-   "items": 36
+   "source": "justwatch-new",
+   "items": 17
   },
   "in2-mx-player-top-movie": {
    "name": "MX Player Top 10",
@@ -113,13 +113,13 @@
   },
   "in2-sonyliv-new-movie": {
    "name": "SonyLIV New Release",
-   "source": "justwatch-new+justwatch+tmdb",
-   "items": 149
+   "source": "justwatch-new",
+   "items": 100
   },
   "in2-sonyliv-new-series": {
    "name": "SonyLIV New Release",
-   "source": "justwatch-new+justwatch+tmdb",
-   "items": 41
+   "source": "justwatch-new",
+   "items": 20
   },
   "in2-sonyliv-top-movie": {
    "name": "SonyLIV Top 10",
@@ -133,13 +133,13 @@
   },
   "in2-zee5-new-movie": {
    "name": "Zee5 New Release",
-   "source": "justwatch-new+justwatch+tmdb",
-   "items": 150
+   "source": "justwatch-new",
+   "items": 100
   },
   "in2-zee5-new-series": {
    "name": "Zee5 New Release",
-   "source": "justwatch-new+justwatch+tmdb",
-   "items": 36
+   "source": "justwatch-new",
+   "items": 21
   },
   "in2-zee5-top-movie": {
    "name": "Zee5 Top 10",
@@ -154,12 +154,12 @@
   "in2-apple-tv-new-movie": {
    "name": "Apple TV+ New Release",
    "source": "justwatch-new+tmdb",
-   "items": 7
+   "items": 8
   },
   "in2-apple-tv-new-series": {
    "name": "Apple TV+ New Release",
-   "source": "tmdb",
-   "items": 10
+   "source": "justwatch-new+tmdb",
+   "items": 18
   },
   "in2-apple-tv-top-movie": {
    "name": "Apple TV+ Top 10",
@@ -174,7 +174,7 @@
   "in2-hoichoi-new-series": {
    "name": "Hoichoi New Release",
    "source": "tmdb",
-   "items": 2
+   "items": 3
   },
   "in2-hoichoi-top-movie": {
    "name": "Hoichoi Top 10",
@@ -188,77 +188,47 @@
   }
  },
  "notes": [
-  "JW arrivals SHOW day failed 2026-11-04 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-11-03 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-11-01 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-11-02 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-30 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-31 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-28 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-29 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-26 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-27 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-25 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-24 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-23 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-22 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-21 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-20 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-19 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-18 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-17 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-16 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-15 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-14 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-13 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-12 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-10 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-11 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-09 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-08 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-07 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-06 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-05 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-04 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-03 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-02 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-10-01 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-30 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-29 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-28 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-27 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-26 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-24 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-25 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-23 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-22 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-21 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-20 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-19 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-18 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-16 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-17 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-15 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-14 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-13 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-12 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-11 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-10 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-09 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-08 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-07 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-06 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals SHOW day failed 2026-09-05 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-09-03 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals SHOW day failed 2026-09-04 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-09-03 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals SHOW day failed 2026-09-02 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals SHOW day failed 2026-09-01 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals SHOW day failed 2026-08-30 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals SHOW day failed 2026-08-31 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals ['atp'] movie: 5 titles in 90 days",
+  "JW arrivals SHOW day failed 2026-08-30 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-29 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-28 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-27 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-26 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-25 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-24 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-23 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-22 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-21 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-20 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-19 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-18 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-17 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-16 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-15 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-14 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-13 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-12 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-11 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-10 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-09 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-08 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-07 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-06 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-05 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-04 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-03 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-02 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-08-01 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals SHOW day failed 2026-07-31 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals ['atp'] movie: 11 titles in 120 days",
   "JustWatch recent failed 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JustWatch popular failed 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals ['atp'] series: 0 titles in 90 days",
+  "JW arrivals ['atp'] series: 10 titles in 120 days",
   "JustWatch recent failed 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JustWatch popular failed 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "Apple TV+ : FlixPatrol data not available",
@@ -266,48 +236,48 @@
   "Apple TV+ : FlixPatrol data not available",
   "Apple TV+ series from_jw failed: 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "Hoichoi | JW used: ['hoc'] | TMDB ids: ['315'] | JW names like it: ['Hoichoi=hoc']",
-  "JW arrivals day failed 2026-11-26 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-11-27 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-11-28 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-11-26 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-11-25 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-11-28 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-10-24 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-10-27 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-10-26 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-24 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-10-25 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-10-23 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-10-22 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-10-21 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-10-20 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-10-17 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-10-19 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-10-18 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-17 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-10-16 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-15 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-10-14 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-10-15 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-10-13 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-10-12 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-10-11 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-10-10 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-09 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-10-08 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-10-09 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-10-07 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-10-06 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-04 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-10-05 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-10-03 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-10-04 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-10-02 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-10-03 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-09-30 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-10-01 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-29 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-09-28 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-27 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-09-29 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-09-26 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-24 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-09-27 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-09-25 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-09-24 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-09-22 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-09-23 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-21 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-09-20 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-09-21 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-09-19 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-09-18 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-09-16 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
@@ -318,22 +288,52 @@
   "JW arrivals day failed 2026-09-12 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-09-11 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-09-10 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-09 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-09-08 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-07 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-09-09 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-09-06 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-03 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-09-04 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-09-07 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-09-05 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-09-04 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-09-02 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals day failed 2026-08-31 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-09-03 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-09-01 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-31 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JW arrivals day failed 2026-08-30 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
-  "JW arrivals ['hoc'] movie: 0 titles in 90 days",
+  "JW arrivals day failed 2026-08-29 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-28 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-26 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-27 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-25 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-24 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-22 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-23 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-21 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-20 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-19 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-18 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-17 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-16 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-15 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-14 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-13 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-12 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-11 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-10 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-09 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-08 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-07 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-06 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-05 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-04 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-03 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-02 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-08-01 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals day failed 2026-07-31 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
+  "JW arrivals ['hoc'] movie: 0 titles in 120 days",
   "JustWatch recent failed 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JustWatch popular failed 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "no data for Hoichoi new movie",
-  "JW arrivals ['hoc'] series: 0 titles in 90 days",
+  "JW arrivals ['hoc'] series: 0 titles in 120 days",
   "JustWatch recent failed 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "JustWatch popular failed 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
   "Hoichoi movie from_jw failed: 429 Client Error: Too Many Requests for url: https://apis.justwatch.com/graphql",
